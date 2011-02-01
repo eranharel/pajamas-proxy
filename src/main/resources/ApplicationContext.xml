@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <property name="ignoreUnresolvablePlaceholders" value="false"/>
+    <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
+    <property name="location" value="file:#{ systemProperties['pajamas.properties'] }"/>
+  </bean>
+
+  <bean id="pajamasProxyDaemon" class="com.outbrain.pajamasproxy.memcached.PajamasProxyDaemon">
+    <constructor-arg ref="serverBootstrap"/>
+    <constructor-arg ref="serverSocketChannelFactory"/>
+    <constructor-arg value="${pajamas.localPort}"/>
+    <constructor-arg ref="connectionManager"/>
+  </bean>
+  
+  <bean id="serverBootstrap" class="org.jboss.netty.bootstrap.ServerBootstrap">
+    <constructor-arg ref="serverSocketChannelFactory"/>
+    <property name="pipelineFactory" ref="channelPipelineFactory"/>
+    <property name="options">
+      <map>
+        <entry key="sendBufferSize" value="${pajamas.sendBufferSize}"/>
+        <entry key="receiveBufferSize" value="${pajamas.receiveBufferSize}"/>
+      </map>
+    </property>
+  </bean>
+
+  <!-- the Executor which will execute the boss threads -->
+  <bean id="bossExecutor" class="java.util.concurrent.Executors" factory-method="newCachedThreadPool"/>
+  <!-- the Executor which will execute the I/O worker threads -->
+  <bean id="workerExecutor" class="java.util.concurrent.Executors" factory-method="newCachedThreadPool"/>
+
+  <bean id="serverSocketChannelFactory" class="org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory">
+    <constructor-arg ref="bossExecutor"/>
+    <constructor-arg ref="workerExecutor"/>
+  </bean>
+  
+  <bean id="channelPipelineFactory" class="com.outbrain.pajamasproxy.memcached.protocol.binary.BinaryPipelineFactory">
+    <constructor-arg>
+      <bean class="com.outbrain.pajamasproxy.memcached.protocol.binary.BinaryCommandDecoder"/>      
+    </constructor-arg>
+    <constructor-arg ref="memcachedCommandHandler"/>
+  </bean>
+  
+  <bean id="socketAddressUtil" class="com.outbrain.pajamasproxy.util.SocketAddressUtil"/>
+  
+  <bean id="remoteCluster" factory-bean="socketAddressUtil" factory-method="parseAddresses">
+    <constructor-arg value="${pajamas.remoteHosts}"/>
+  </bean>
+  
+  <bean id="memcachedCommandHandler" class="com.outbrain.pajamasproxy.memcached.protocol.MemcachedCommandHandler">        
+    <constructor-arg ref="connectionManager"/>
+  </bean>
+
+  <bean id="connectionManager" class="com.outbrain.pajamasproxy.memcached.protocol.ConnectionManager">
+    <constructor-arg ref="clientSocketChannelFactory"/>
+    <constructor-arg ref="remoteCluster"/>
+  </bean>
+  
+  <bean id="clientSocketChannelFactory" class="org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory">
+	   <constructor-arg ref="bossExecutor"/>
+	   <constructor-arg ref="workerExecutor"/>
+  </bean>
+
+</beans>
