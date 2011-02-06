@@ -1,5 +1,7 @@
 package com.outbrain.pajamasproxy.memcached.protocol.binary;
 
+import java.nio.charset.Charset;
+
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.Channel;
@@ -48,7 +50,7 @@ public class BinaryCommandDecoder extends FrameDecoder {
     partialHeaderBuffer.readUnsignedByte(); // Magic
     final short opcode = partialHeaderBuffer.readUnsignedByte();
     final short keyLength = partialHeaderBuffer.readShort();
-    partialHeaderBuffer.readUnsignedByte(); // Extras length
+    final short extrasLength = partialHeaderBuffer.readUnsignedByte();
     partialHeaderBuffer.readUnsignedByte(); // Data type
     partialHeaderBuffer.readShort(); // Reserved
     final int totalBodyLength = partialHeaderBuffer.readInt();
@@ -59,19 +61,23 @@ public class BinaryCommandDecoder extends FrameDecoder {
       return null;
     }
 
-    byte[] key = null;
+    // read extras... ignore for now
+    buffer.readBytes(ChannelBuffers.buffer(extrasLength));
+
+    String key = null;
     if (0 < keyLength) {
       buffer.readBytes(ChannelBuffers.buffer(12)); // we want the key now
       final ChannelBuffer keyBuffer = ChannelBuffers.buffer(keyLength);
       buffer.readBytes(keyBuffer);
-      key = keyBuffer.array();
+      key = keyBuffer.toString(Charset.forName("utf-8"));
     }
 
-    buffer.resetReaderIndex();
-    final ChannelBuffer messageBuffer = ChannelBuffers.buffer(24 + totalBodyLength);
-    buffer.readBytes(messageBuffer);
+    // read value if any
+    final int dataSize = totalBodyLength - keyLength - extrasLength;
+    final ChannelBuffer dataBuffer = ChannelBuffers.buffer(dataSize);
+    buffer.readBytes(dataBuffer);
 
-    return new MemcachedCommand(messageBuffer, key, (byte) opcode);
+    return new MemcachedCommand(key, dataBuffer.array(), (byte) opcode);
   }
 
 }

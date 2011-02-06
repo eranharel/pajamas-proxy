@@ -12,6 +12,11 @@
     <appender-ref ref="stdout" />
   </logger>
 
+  <logger name="com.outbrain.pajamasproxy" additivity="false">
+    <level value="debug" />
+    <appender-ref ref="stdout" />
+  </logger>
+
   <root>
     <priority value="info"/>
     <appender-ref ref="stdout"/>

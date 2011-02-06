@@ -10,8 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.outbrain.pajamasproxy.memcached.protocol.ConnectionManager;
-
 public class PajamasProxyDaemon {
   private static final Logger log = LoggerFactory.getLogger(PajamasProxyDaemon.class);
 
@@ -23,15 +21,12 @@ public class PajamasProxyDaemon {
 
   private final int localPort;
 
-  private final ConnectionManager connectionManager;
-
   private transient boolean running = false;
 
-  public PajamasProxyDaemon(final ServerBootstrap serverBootstrap, final ServerSocketChannelFactory serverSocketChannelFactory, final int localPort, final ConnectionManager connectionManager) {
+  public PajamasProxyDaemon(final ServerBootstrap serverBootstrap, final ServerSocketChannelFactory serverSocketChannelFactory, final int localPort) {
     this.serverBootstrap = serverBootstrap;
     this.serverSocketChannelFactory = serverSocketChannelFactory;
     this.localPort = localPort;
-    this.connectionManager = connectionManager;
   }
 
   public void start() {
@@ -54,8 +49,6 @@ public class PajamasProxyDaemon {
     } else {
       log.error("Failed to close all network channels");
     }
-
-    connectionManager.close();
 
     running = false;
   }
