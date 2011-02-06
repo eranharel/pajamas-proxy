@@ -13,7 +13,6 @@
     <constructor-arg ref="serverBootstrap"/>
     <constructor-arg ref="serverSocketChannelFactory"/>
     <constructor-arg value="${pajamas.localPort}"/>
-    <constructor-arg ref="connectionManager"/>
   </bean>
   
   <bean id="serverBootstrap" class="org.jboss.netty.bootstrap.ServerBootstrap">
@@ -44,24 +43,30 @@
     <constructor-arg ref="memcachedCommandHandler"/>
   </bean>
   
-  <bean id="socketAddressUtil" class="com.outbrain.pajamasproxy.util.SocketAddressUtil"/>
-  
-  <bean id="remoteCluster" factory-bean="socketAddressUtil" factory-method="parseAddresses">
-    <constructor-arg value="${pajamas.remoteHosts}"/>
-  </bean>
-  
   <bean id="memcachedCommandHandler" class="com.outbrain.pajamasproxy.memcached.protocol.MemcachedCommandHandler">        
-    <constructor-arg ref="connectionManager"/>
+    <constructor-arg ref="memcachedClient"/>
   </bean>
 
-  <bean id="connectionManager" class="com.outbrain.pajamasproxy.memcached.protocol.ConnectionManager">
-    <constructor-arg ref="clientSocketChannelFactory"/>
-    <constructor-arg ref="remoteCluster"/>
-  </bean>
-  
-  <bean id="clientSocketChannelFactory" class="org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory">
-	   <constructor-arg ref="bossExecutor"/>
-	   <constructor-arg ref="workerExecutor"/>
-  </bean>
 
+
+	<bean name="memcachedClient" class="net.rubyeye.xmemcached.utils.XMemcachedClientFactoryBean" destroy-method="shutdown">
+		<property name="servers" value="${pajamas.remoteHosts}"/>
+		<!-- nio connection pool size -->
+		<property name="connectionPoolSize" value="2"></property>
+		<!-- Use binary protocol,default is TextCommandFactory -->
+		<property name="commandFactory">
+			<bean class="net.rubyeye.xmemcached.command.BinaryCommandFactory"/>
+		</property>
+		<!-- Distributed strategy -->
+		<property name="sessionLocator">
+			<bean class="net.rubyeye.xmemcached.impl.KetamaMemcachedSessionLocator"/>
+		</property>
+		<property name="transcoder">
+			<bean class="com.outbrain.pajamasproxy.memcached.outbound.binary.ProxyTranscoder" />
+		</property>
+		<!-- ByteBuffer allocator -->
+		<property name="bufferAllocator">
+			<bean class="net.rubyeye.xmemcached.buffer.SimpleBufferAllocator"/>
+		</property>
+	</bean>
 </beans>

@@ -1,15 +1,14 @@
 package com.outbrain.pajamasproxy.memcached.protocol;
 
-import org.jboss.netty.buffer.ChannelBuffer;
 
 public class MemcachedCommand {
   private final byte opcode;
-  private final byte[] key;
-  private final ChannelBuffer messageBuffer;
+  private final String key;
+  private final byte[] value;
 
-  public MemcachedCommand(final ChannelBuffer messageBuffer, final byte[] key, final byte opcode) {
-    this.messageBuffer = messageBuffer;
+  public MemcachedCommand(final String key, final byte[] value, final byte opcode) {
     this.key = key;
+    this.value = value;
     this.opcode = opcode;
   }
 
@@ -17,11 +16,11 @@ public class MemcachedCommand {
     return opcode;
   }
 
-  public byte[] getKey() {
+  public String getKey() {
     return key;
   }
 
-  public ChannelBuffer getMessageBuffer() {
-    return messageBuffer;
+  public byte[] getValue() {
+    return value;
   }
 }
