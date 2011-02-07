@@ -62,7 +62,7 @@
 			<bean class="net.rubyeye.xmemcached.impl.KetamaMemcachedSessionLocator"/>
 		</property>
 		<property name="transcoder">
-			<bean class="com.outbrain.pajamasproxy.memcached.outbound.binary.ProxyTranscoder" />
+			<bean class="com.outbrain.pajamasproxy.util.ProxyTranscoder" />
 		</property>
 		<!-- ByteBuffer allocator -->
 		<property name="bufferAllocator">
