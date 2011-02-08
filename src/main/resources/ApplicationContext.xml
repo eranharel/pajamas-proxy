@@ -9,50 +9,25 @@
     <property name="location" value="file:#{ systemProperties['pajamas.properties'] }"/>
   </bean>
 
-  <bean id="pajamasProxyDaemon" class="com.outbrain.pajamasproxy.memcached.PajamasProxyDaemon">
-    <constructor-arg ref="serverBootstrap"/>
-    <constructor-arg ref="serverSocketChannelFactory"/>
-    <constructor-arg value="${pajamas.localPort}"/>
-  </bean>
-  
-  <bean id="serverBootstrap" class="org.jboss.netty.bootstrap.ServerBootstrap">
-    <constructor-arg ref="serverSocketChannelFactory"/>
-    <property name="pipelineFactory" ref="channelPipelineFactory"/>
-    <property name="options">
-      <map>
-        <entry key="sendBufferSize" value="${pajamas.sendBufferSize}"/>
-        <entry key="receiveBufferSize" value="${pajamas.receiveBufferSize}"/>
-      </map>
+  <bean id="daemon" class="com.thimbleware.jmemcached.MemCacheDaemon">
+    <constructor-arg ref="cacheProxy"/>
+    <property name="binary" value="true"/>
+    <property name="verbose" value="${pajamas.deamon.verbose}"/>
+    <property name="addr">
+      <bean class="java.net.InetSocketAddress">
+        <constructor-arg value="${pajamas.localPort}"/>
+      </bean>
     </property>
   </bean>
 
-  <!-- the Executor which will execute the boss threads -->
-  <bean id="bossExecutor" class="java.util.concurrent.Executors" factory-method="newCachedThreadPool"/>
-  <!-- the Executor which will execute the I/O worker threads -->
-  <bean id="workerExecutor" class="java.util.concurrent.Executors" factory-method="newCachedThreadPool"/>
-
-  <bean id="serverSocketChannelFactory" class="org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory">
-    <constructor-arg ref="bossExecutor"/>
-    <constructor-arg ref="workerExecutor"/>
-  </bean>
-  
-  <bean id="channelPipelineFactory" class="com.outbrain.pajamasproxy.memcached.protocol.binary.BinaryPipelineFactory">
-    <constructor-arg>
-      <bean class="com.outbrain.pajamasproxy.memcached.protocol.binary.BinaryCommandDecoder"/>      
-    </constructor-arg>
-    <constructor-arg ref="memcachedCommandHandler"/>
-  </bean>
-  
-  <bean id="memcachedCommandHandler" class="com.outbrain.pajamasproxy.memcached.protocol.MemcachedCommandHandler">        
+  <bean id="cacheProxy" class="com.outbrain.pajamasproxy.memcached.proxy.CacheProxy">
     <constructor-arg ref="memcachedClient"/>
   </bean>
-
-
 
 	<bean name="memcachedClient" class="net.rubyeye.xmemcached.utils.XMemcachedClientFactoryBean" destroy-method="shutdown">
 		<property name="servers" value="${pajamas.remoteHosts}"/>
 		<!-- nio connection pool size -->
-		<property name="connectionPoolSize" value="2"></property>
+		<property name="connectionPoolSize" value="${pajamas.client.connectionPoolSize}"></property>
 		<!-- Use binary protocol,default is TextCommandFactory -->
 		<property name="commandFactory">
 			<bean class="net.rubyeye.xmemcached.command.BinaryCommandFactory"/>
@@ -61,12 +36,14 @@
 		<property name="sessionLocator">
 			<bean class="net.rubyeye.xmemcached.impl.KetamaMemcachedSessionLocator"/>
 		</property>
+		<!-- This is the adapter between the jmemcached server and xmemcached client -->
 		<property name="transcoder">
-			<bean class="com.outbrain.pajamasproxy.util.ProxyTranscoder" />
+			<bean class="com.outbrain.pajamasproxy.memcached.adapter.CacheElementTranscoder" />
 		</property>
 		<!-- ByteBuffer allocator -->
 		<property name="bufferAllocator">
 			<bean class="net.rubyeye.xmemcached.buffer.SimpleBufferAllocator"/>
 		</property>
+		<property name="failureMode" value="true"/>
 	</bean>
 </beans>
