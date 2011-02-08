@@ -44,6 +44,5 @@
 		<property name="bufferAllocator">
 			<bean class="net.rubyeye.xmemcached.buffer.SimpleBufferAllocator"/>
 		</property>
-		<property name="failureMode" value="true"/>
 	</bean>
 </beans>
