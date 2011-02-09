@@ -27,7 +27,7 @@
 	<bean name="memcachedClient" class="net.rubyeye.xmemcached.utils.XMemcachedClientFactoryBean" destroy-method="shutdown">
 		<property name="servers" value="${pajamas.remoteHosts}"/>
 		<!-- nio connection pool size -->
-		<property name="connectionPoolSize" value="${pajamas.client.connectionPoolSize}"></property>
+		<property name="connectionPoolSize" value="${pajamas.client.connectionPoolSize}"/>
 		<!-- Use binary protocol,default is TextCommandFactory -->
 		<property name="commandFactory">
 			<bean class="net.rubyeye.xmemcached.command.BinaryCommandFactory"/>
@@ -39,10 +39,6 @@
 		<!-- This is the adapter between the jmemcached server and xmemcached client -->
 		<property name="transcoder">
 			<bean class="com.outbrain.pajamasproxy.memcached.adapter.CacheElementTranscoder" />
-		</property>
-		<!-- ByteBuffer allocator -->
-		<property name="bufferAllocator">
-			<bean class="net.rubyeye.xmemcached.buffer.SimpleBufferAllocator"/>
 		</property>
 	</bean>
 </beans>

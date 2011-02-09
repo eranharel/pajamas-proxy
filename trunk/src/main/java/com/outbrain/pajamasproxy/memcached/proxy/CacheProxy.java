@@ -2,12 +2,13 @@ package com.outbrain.pajamasproxy.memcached.proxy;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeoutException;
 
 import net.rubyeye.xmemcached.MemcachedClient;
-import net.rubyeye.xmemcached.exception.MemcachedException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,8 @@ import com.thimbleware.jmemcached.Key;
 
 class CacheProxy implements Cache<CacheElement> {
 
+  private static final Charset DEFAULT_CHARSET = Charset.forName("utf-8");
+
   private static Logger log = LoggerFactory.getLogger(CacheProxy.class);
 
   private final MemcachedClient memcachedClient;
@@ -26,100 +29,135 @@ class CacheProxy implements Cache<CacheElement> {
     this.memcachedClient = memcachedClient;
   }
 
+  @SuppressWarnings("deprecation")
   @Override
-  public com.thimbleware.jmemcached.Cache.DeleteResponse delete(final Key key, final int time) {
-    // TODO Auto-generated method stub
-    return null;
+  public DeleteResponse delete(final Key key, final int time) {
+    boolean wasSuccess = false;
+    try {
+      wasSuccess = memcachedClient.delete(toStringKey(key), time);
+    } catch (final Exception e) {
+      handleClientException("delete", e);
+    }
+
+    return wasSuccess ? DeleteResponse.DELETED : DeleteResponse.NOT_FOUND;
   }
 
   @Override
-  public com.thimbleware.jmemcached.Cache.StoreResponse add(final CacheElement e) {
-    // TODO Auto-generated method stub
-    return null;
+  public StoreResponse add(final CacheElement element) {
+    boolean wasSuccess = false;
+    try {
+      wasSuccess = memcachedClient.add(toStringKey(element.getKey()), element.getExpire(), element);
+    } catch (final Exception ex) {
+      handleClientException("add", ex);
+    }
+
+    return storeResponse(wasSuccess);
   }
 
   @Override
-  public com.thimbleware.jmemcached.Cache.StoreResponse replace(final CacheElement e) {
-    // TODO Auto-generated method stub
-    return null;
+  public StoreResponse replace(final CacheElement element) {
+    boolean wasSuccess = false;
+
+    try {
+      wasSuccess = memcachedClient.replace(toStringKey(element.getKey()), element.getExpire(), element);
+    } catch (final Exception ex) {
+      handleClientException("replace", ex);
+    }
+
+    return storeResponse(wasSuccess);
   }
 
   @Override
-  public com.thimbleware.jmemcached.Cache.StoreResponse append(final CacheElement element) {
-    // TODO Auto-generated method stub
-    return null;
+  public StoreResponse append(final CacheElement element) {
+    boolean wasSuccess = false;
+
+    try {
+      wasSuccess = memcachedClient.append(toStringKey(element.getKey()), element);
+    } catch (final Exception ex) {
+      handleClientException("append", ex);
+    }
+
+    return storeResponse(wasSuccess);
   }
 
   @Override
-  public com.thimbleware.jmemcached.Cache.StoreResponse prepend(final CacheElement element) {
-    // TODO Auto-generated method stub
-    return null;
+  public StoreResponse prepend(final CacheElement element) {
+    boolean wasSuccess = false;
+
+    try {
+      wasSuccess = memcachedClient.prepend(toStringKey(element.getKey()), element);
+    } catch (final Exception ex) {
+      handleClientException("prepend", ex);
+    }
+
+    return storeResponse(wasSuccess);
   }
 
   @Override
   public com.thimbleware.jmemcached.Cache.StoreResponse set(final CacheElement e) {
+    boolean wasSuccess = false;
     try {
-      log.trace("val={}", e.getData().array());
-      memcachedClient.set(toStringKey(e.getKey()), e.getExpire(), e);
-    } catch (final InterruptedException e1) {
-      Thread.currentThread().interrupt();
-    } catch (final Exception e1) {
-      e1.printStackTrace();
-
-      return StoreResponse.NOT_STORED;
+      wasSuccess = memcachedClient.set(toStringKey(e.getKey()), e.getExpire(), e);
+    } catch (final Exception ex) {
+      handleClientException("set", ex);
     }
-    return StoreResponse.STORED;
+
+    return storeResponse(wasSuccess);
   }
 
   @Override
-  public com.thimbleware.jmemcached.Cache.StoreResponse cas(final Long cas_key, final CacheElement e) {
-    // TODO Auto-generated method stub
-    return null;
+  public StoreResponse cas(final Long cas_key, final CacheElement e) {
+    throw new UnsupportedOperationException("cas");
   }
 
   @Override
   public Integer get_add(final Key key, final int mod) {
-    // TODO Auto-generated method stub
+    try {
+      return Long.valueOf(memcachedClient.incr(toStringKey(key), mod)).intValue();
+    } catch (final Exception e) {
+      handleClientException("incr", e);
+    }
+
     return null;
   }
 
   @Override
   public CacheElement[] get(final Key... keys) {
-    final Key key = keys[0];
-    CacheElement value = null;
-    try {
-      value = memcachedClient.get(toStringKey(key));
-    } catch (final TimeoutException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    } catch (final InterruptedException e) {
-      Thread.currentThread().interrupt();
-    } catch (final MemcachedException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+    final List<String> stringKeys = new ArrayList<String>(keys.length);
+    for (final Key key : keys) {
+      stringKeys.add(toStringKey(key));
     }
 
-    return new CacheElement[] { value };
+    try {
+      final Map<String, CacheElement> values = memcachedClient.get(stringKeys);
+      return values.isEmpty() ? null : values.values().toArray(new CacheElement[values.size()]);
+    } catch (final Exception e) {
+      handleClientException("get", e);
+    }
+
+    return null;
   }
 
   @Override
   public boolean flush_all() {
     try {
       memcachedClient.flushAll();
-    } catch (final InterruptedException e) {
-      Thread.currentThread().interrupt();
-      return false;
     } catch (final Exception e) {
-      e.printStackTrace();
-      return false;
+      handleClientException("flushAll", e);
     }
+
     return true;
   }
 
   @Override
   public boolean flush_all(final int expire) {
-    // TODO Auto-generated method stub
-    return false;
+    try {
+      memcachedClient.flushAll(expire, 5000);
+    } catch (final Exception e) {
+      handleClientException("flushAll", e);
+    }
+
+    return true;
   }
 
   @Override
@@ -172,7 +210,7 @@ class CacheProxy implements Cache<CacheElement> {
   @Override
   public Map<String, Set<String>> stat(final String arg) {
     // TODO Auto-generated method stub
-    return null;
+    return Collections.emptyMap(); // this is just to avoid NPE until I implement this properly
   }
 
   @Override
@@ -182,7 +220,20 @@ class CacheProxy implements Cache<CacheElement> {
   }
 
   private String toStringKey(final Key key) {
-    return key.bytes.toString(Charset.forName("utf-8"));
+    return key.bytes.toString(DEFAULT_CHARSET);
   }
 
+  private void handleClientException(final String command, final Exception e) {
+    final String message = new StringBuilder("Failed to execute ").append(command).append("command").toString();
+    log.error(message, e);
+    if (e instanceof InterruptedException) {
+      Thread.currentThread().interrupt();
+    }
+
+    throw new RuntimeException(message);
+  }
+
+  private com.thimbleware.jmemcached.Cache.StoreResponse storeResponse(final boolean succeeded) {
+    return succeeded ? StoreResponse.STORED : StoreResponse.NOT_STORED;
+  }
 }
