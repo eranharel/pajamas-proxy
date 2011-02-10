@@ -224,7 +224,7 @@ class CacheProxy implements Cache<CacheElement> {
   }
 
   private void handleClientException(final String command, final Exception e) {
-    final String message = new StringBuilder("Failed to execute ").append(command).append("command").toString();
+    final String message = new StringBuilder("Failed to execute ").append(command).append(" command").toString();
     log.error(message, e);
     if (e instanceof InterruptedException) {
       Thread.currentThread().interrupt();
