@@ -21,7 +21,11 @@
   </bean>
 
   <bean id="cacheProxy" class="com.outbrain.pajamasproxy.memcached.proxy.CacheProxy">
-    <constructor-arg ref="memcachedClient"/>
+    <constructor-arg ref="cacheClientFactory"/>
+  </bean>
+
+  <bean id="cacheClientFactory" class="org.springframework.beans.factory.config.ServiceLocatorFactoryBean">
+    <property name="serviceLocatorInterface" value="com.outbrain.pajamasproxy.memcached.proxy.CacheClientFactory"/>
   </bean>
 
 	<bean name="memcachedClient" class="net.rubyeye.xmemcached.utils.XMemcachedClientFactoryBean" destroy-method="shutdown">
@@ -40,5 +44,23 @@
 		<property name="transcoder">
 			<bean class="com.outbrain.pajamasproxy.memcached.adapter.CacheElementTranscoder" />
 		</property>
+	</bean>
+	
+	<!-- JMX -->
+	<bean id="mbeanServer" class="org.springframework.jmx.support.MBeanServerFactoryBean">
+    <property name="locateExistingServerIfPossible" value="true"/>
+	</bean>
+	
+	<bean id="mbeanExporter" class="org.springframework.jmx.export.MBeanExporter">
+    <property name="beans">
+      <map>
+        <entry key="com.outbrain.pajamasproxy.memcached.monitor.Statistics:type=Statistics" value-ref="statisticsMBean"/>
+      </map>
+    </property>
+    <property name="server" ref="mbeanServer"/>    
+	</bean>
+	
+	<bean id="statisticsMBean" class="com.outbrain.pajamasproxy.memcached.monitor.Statistics">
+    <constructor-arg ref="cacheProxy"/>
 	</bean>
 </beans>

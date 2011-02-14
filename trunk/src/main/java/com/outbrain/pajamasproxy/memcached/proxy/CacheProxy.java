@@ -3,7 +3,6 @@ package com.outbrain.pajamasproxy.memcached.proxy;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -13,20 +12,24 @@ import net.rubyeye.xmemcached.MemcachedClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.thimbleware.jmemcached.Cache;
+import com.thimbleware.jmemcached.AbstractCache;
 import com.thimbleware.jmemcached.CacheElement;
 import com.thimbleware.jmemcached.Key;
 
-class CacheProxy implements Cache<CacheElement> {
+class CacheProxy extends AbstractCache<CacheElement> {
 
   private static final Charset DEFAULT_CHARSET = Charset.forName("utf-8");
 
   private static Logger log = LoggerFactory.getLogger(CacheProxy.class);
 
-  private final MemcachedClient memcachedClient;
+  private final CacheClientFactory cacheClientFactory;
 
-  public CacheProxy(final MemcachedClient memcachedClient) throws IOException {
-    this.memcachedClient = memcachedClient;
+  public CacheProxy(final CacheClientFactory cacheClientFactory) throws IOException {
+    this.cacheClientFactory = cacheClientFactory;
+  }
+
+  private MemcachedClient getCacheClient() {
+    return cacheClientFactory.createCacheClient();
   }
 
   @SuppressWarnings("deprecation")
@@ -34,7 +37,7 @@ class CacheProxy implements Cache<CacheElement> {
   public DeleteResponse delete(final Key key, final int time) {
     boolean wasSuccess = false;
     try {
-      wasSuccess = memcachedClient.delete(toStringKey(key), time);
+      wasSuccess = getCacheClient().delete(toStringKey(key), time);
     } catch (final Exception e) {
       handleClientException("delete", e);
     }
@@ -46,7 +49,7 @@ class CacheProxy implements Cache<CacheElement> {
   public StoreResponse add(final CacheElement element) {
     boolean wasSuccess = false;
     try {
-      wasSuccess = memcachedClient.add(toStringKey(element.getKey()), element.getExpire(), element);
+      wasSuccess = getCacheClient().add(toStringKey(element.getKey()), element.getExpire(), element);
     } catch (final Exception ex) {
       handleClientException("add", ex);
     }
@@ -59,7 +62,7 @@ class CacheProxy implements Cache<CacheElement> {
     boolean wasSuccess = false;
 
     try {
-      wasSuccess = memcachedClient.replace(toStringKey(element.getKey()), element.getExpire(), element);
+      wasSuccess = getCacheClient().replace(toStringKey(element.getKey()), element.getExpire(), element);
     } catch (final Exception ex) {
       handleClientException("replace", ex);
     }
@@ -72,7 +75,7 @@ class CacheProxy implements Cache<CacheElement> {
     boolean wasSuccess = false;
 
     try {
-      wasSuccess = memcachedClient.append(toStringKey(element.getKey()), element);
+      wasSuccess = getCacheClient().append(toStringKey(element.getKey()), element);
     } catch (final Exception ex) {
       handleClientException("append", ex);
     }
@@ -85,7 +88,7 @@ class CacheProxy implements Cache<CacheElement> {
     boolean wasSuccess = false;
 
     try {
-      wasSuccess = memcachedClient.prepend(toStringKey(element.getKey()), element);
+      wasSuccess = getCacheClient().prepend(toStringKey(element.getKey()), element);
     } catch (final Exception ex) {
       handleClientException("prepend", ex);
     }
@@ -94,10 +97,11 @@ class CacheProxy implements Cache<CacheElement> {
   }
 
   @Override
-  public com.thimbleware.jmemcached.Cache.StoreResponse set(final CacheElement e) {
+  public StoreResponse set(final CacheElement e) {
     boolean wasSuccess = false;
+    setCmds.incrementAndGet();
     try {
-      wasSuccess = memcachedClient.set(toStringKey(e.getKey()), e.getExpire(), e);
+      wasSuccess = getCacheClient().set(toStringKey(e.getKey()), e.getExpire(), e);
     } catch (final Exception ex) {
       handleClientException("set", ex);
     }
@@ -113,7 +117,7 @@ class CacheProxy implements Cache<CacheElement> {
   @Override
   public Integer get_add(final Key key, final int mod) {
     try {
-      return Long.valueOf(memcachedClient.incr(toStringKey(key), mod)).intValue();
+      return Long.valueOf(getCacheClient().incr(toStringKey(key), mod)).intValue();
     } catch (final Exception e) {
       handleClientException("incr", e);
     }
@@ -123,13 +127,18 @@ class CacheProxy implements Cache<CacheElement> {
 
   @Override
   public CacheElement[] get(final Key... keys) {
+    getCmds.incrementAndGet();
     final List<String> stringKeys = new ArrayList<String>(keys.length);
     for (final Key key : keys) {
       stringKeys.add(toStringKey(key));
     }
 
     try {
-      final Map<String, CacheElement> values = memcachedClient.get(stringKeys);
+      final Map<String, CacheElement> values = getCacheClient().get(stringKeys);
+      final int hits = values.size();
+      final int misses = keys.length - hits;
+      getMisses.addAndGet(misses);
+      getHits.addAndGet(hits);
       return values.isEmpty() ? null : values.values().toArray(new CacheElement[values.size()]);
     } catch (final Exception e) {
       handleClientException("get", e);
@@ -141,7 +150,7 @@ class CacheProxy implements Cache<CacheElement> {
   @Override
   public boolean flush_all() {
     try {
-      memcachedClient.flushAll();
+      getCacheClient().flushAll();
     } catch (final Exception e) {
       handleClientException("flushAll", e);
     }
@@ -152,7 +161,7 @@ class CacheProxy implements Cache<CacheElement> {
   @Override
   public boolean flush_all(final int expire) {
     try {
-      memcachedClient.flushAll(expire, 5000);
+      getCacheClient().flushAll(expire, 5000);
     } catch (final Exception e) {
       handleClientException("flushAll", e);
     }
@@ -162,7 +171,7 @@ class CacheProxy implements Cache<CacheElement> {
 
   @Override
   public void close() throws IOException {
-    memcachedClient.shutdown();
+    getCacheClient().shutdown();
   }
 
   @Override
@@ -184,39 +193,14 @@ class CacheProxy implements Cache<CacheElement> {
   }
 
   @Override
-  public int getGetCmds() {
-    // TODO Auto-generated method stub
-    return 0;
-  }
-
-  @Override
-  public int getSetCmds() {
-    // TODO Auto-generated method stub
-    return 0;
-  }
-
-  @Override
-  public int getGetHits() {
-    // TODO Auto-generated method stub
-    return 0;
-  }
-
-  @Override
-  public int getGetMisses() {
-    // TODO Auto-generated method stub
-    return 0;
-  }
-
-  @Override
-  public Map<String, Set<String>> stat(final String arg) {
-    // TODO Auto-generated method stub
-    return Collections.emptyMap(); // this is just to avoid NPE until I implement this properly
-  }
-
-  @Override
   public void asyncEventPing() {
     // TODO Auto-generated method stub
 
+  }
+
+  @Override
+  protected Set<Key> keys() {
+    throw new UnsupportedOperationException("WTF???");
   }
 
   private String toStringKey(final Key key) {
