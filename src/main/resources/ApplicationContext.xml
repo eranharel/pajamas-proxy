@@ -21,36 +21,20 @@
   </bean>
   
   <bean id="cacheProxy" class="com.outbrain.pajamasproxy.memcached.proxy.SpyCacheProxy">
-    <constructor-arg>
-      <bean class="net.spy.memcached.AddrUtil" factory-method="getAddresses">
-        <constructor-arg value="${pajamas.remoteHosts}"/>
-      </bean>
-    </constructor-arg>
+    <constructor-arg ref="memcachedClient"/>
   </bean>
-<!--  
-  <bean id="memcachedClient" class="net.spy.memcached.MemcachedClient" destroy-method="shutdown">
-    <constructor-arg>
-      <bean factory-bean="connectionFactoryBuilder" factory-method="build"/>
-    </constructor-arg>
-    <constructor-arg>
-      <bean class="net.spy.memcached.AddrUtil" factory-method="getAddresses">
-        <constructor-arg value="${pajamas.remoteHosts}"/>
-      </bean>
-    </constructor-arg>
-  </bean>  
-  
-  <bean id="connectionFactoryBuilder" class="net.spy.memcached.ConnectionFactoryBuilder">
-    <property name="protocol">
-      <bean id="net.spy.memcached.ConnectionFactoryBuilder.Protocol.BINARY" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean"/>
-    </property>
+
+  <bean id="memcachedClient" class="net.spy.memcached.utils.MemcachedClientFactoryBean">
+    <property name="servers" value="${pajamas.remoteHosts}"/>
+    <property name="protocol" value="BINARY"/>
     <property name="transcoder">
       <bean class="com.outbrain.pajamasproxy.memcached.adapter.SpyCacheElementTranscoder"/>
     </property>
     <property name="hashAlg" value="KETAMA_HASH"/>
-    <property name="locatorType" value="CONSISTENT"/>
-  </bean>
+    <property name="locatorType" value="CONSISTENT"/>    
+  </bean>  
   
-
+<!-- 
   <bean id="cacheProxy" class="com.outbrain.pajamasproxy.memcached.proxy.XCacheProxy">
     <constructor-arg ref="cacheClientFactory"/>
   </bean>
