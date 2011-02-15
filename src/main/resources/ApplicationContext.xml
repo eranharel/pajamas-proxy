@@ -51,7 +51,7 @@
   </bean>
   
 
-  <bean id="cacheProxy" class="com.outbrain.pajamasproxy.memcached.proxy.CacheProxy">
+  <bean id="cacheProxy" class="com.outbrain.pajamasproxy.memcached.proxy.XCacheProxy">
     <constructor-arg ref="cacheClientFactory"/>
   </bean>
 
@@ -69,7 +69,7 @@
 			<bean class="net.rubyeye.xmemcached.impl.KetamaMemcachedSessionLocator"/>
 		</property>
 		<property name="transcoder">
-			<bean class="com.outbrain.pajamasproxy.memcached.adapter.CacheElementTranscoder" />
+			<bean class="com.outbrain.pajamasproxy.memcached.adapter.XCacheElementTranscoder" />
 		</property>
 	</bean>
 -->
