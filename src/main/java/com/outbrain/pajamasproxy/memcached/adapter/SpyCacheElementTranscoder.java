@@ -9,6 +9,11 @@ import org.jboss.netty.buffer.ChannelBuffers;
 import com.thimbleware.jmemcached.CacheElement;
 import com.thimbleware.jmemcached.LocalCacheElement;
 
+/**
+ * An adapter between the Jmemcached server and Spymemcached client APIs.
+ * 
+ * @author Eran Harel
+ */
 public class SpyCacheElementTranscoder implements Transcoder<Object> {
 
   @Override
