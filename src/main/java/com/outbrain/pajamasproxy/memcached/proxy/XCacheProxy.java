@@ -16,15 +16,15 @@ import com.thimbleware.jmemcached.AbstractCache;
 import com.thimbleware.jmemcached.CacheElement;
 import com.thimbleware.jmemcached.Key;
 
-class CacheProxy extends AbstractCache<CacheElement> {
+class XCacheProxy extends AbstractCache<CacheElement> {
 
   private static final Charset DEFAULT_CHARSET = Charset.forName("utf-8");
 
-  private static Logger log = LoggerFactory.getLogger(CacheProxy.class);
+  private static Logger log = LoggerFactory.getLogger(XCacheProxy.class);
 
   private final CacheClientFactory cacheClientFactory;
 
-  public CacheProxy(final CacheClientFactory cacheClientFactory) throws IOException {
+  public XCacheProxy(final CacheClientFactory cacheClientFactory) throws IOException {
     this.cacheClientFactory = cacheClientFactory;
   }
 
