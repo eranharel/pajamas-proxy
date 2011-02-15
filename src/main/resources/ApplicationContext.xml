@@ -19,6 +19,37 @@
       </bean>
     </property>
   </bean>
+  
+  <bean id="cacheProxy" class="com.outbrain.pajamasproxy.memcached.proxy.SpyCacheProxy">
+    <constructor-arg>
+      <bean class="net.spy.memcached.AddrUtil" factory-method="getAddresses">
+        <constructor-arg value="${pajamas.remoteHosts}"/>
+      </bean>
+    </constructor-arg>
+  </bean>
+<!--  
+  <bean id="memcachedClient" class="net.spy.memcached.MemcachedClient" destroy-method="shutdown">
+    <constructor-arg>
+      <bean factory-bean="connectionFactoryBuilder" factory-method="build"/>
+    </constructor-arg>
+    <constructor-arg>
+      <bean class="net.spy.memcached.AddrUtil" factory-method="getAddresses">
+        <constructor-arg value="${pajamas.remoteHosts}"/>
+      </bean>
+    </constructor-arg>
+  </bean>  
+  
+  <bean id="connectionFactoryBuilder" class="net.spy.memcached.ConnectionFactoryBuilder">
+    <property name="protocol">
+      <bean id="net.spy.memcached.ConnectionFactoryBuilder.Protocol.BINARY" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean"/>
+    </property>
+    <property name="transcoder">
+      <bean class="com.outbrain.pajamasproxy.memcached.adapter.SpyCacheElementTranscoder"/>
+    </property>
+    <property name="hashAlg" value="KETAMA_HASH"/>
+    <property name="locatorType" value="CONSISTENT"/>
+  </bean>
+  
 
   <bean id="cacheProxy" class="com.outbrain.pajamasproxy.memcached.proxy.CacheProxy">
     <constructor-arg ref="cacheClientFactory"/>
@@ -30,21 +61,18 @@
 
 	<bean name="memcachedClient" class="net.rubyeye.xmemcached.utils.XMemcachedClientFactoryBean" destroy-method="shutdown">
 		<property name="servers" value="${pajamas.remoteHosts}"/>
-		<!-- nio connection pool size -->
 		<property name="connectionPoolSize" value="${pajamas.client.connectionPoolSize}"/>
-		<!-- Use binary protocol,default is TextCommandFactory -->
 		<property name="commandFactory">
 			<bean class="net.rubyeye.xmemcached.command.BinaryCommandFactory"/>
 		</property>
-		<!-- Distributed strategy -->
 		<property name="sessionLocator">
 			<bean class="net.rubyeye.xmemcached.impl.KetamaMemcachedSessionLocator"/>
 		</property>
-		<!-- This is the adapter between the jmemcached server and xmemcached client -->
 		<property name="transcoder">
 			<bean class="com.outbrain.pajamasproxy.memcached.adapter.CacheElementTranscoder" />
 		</property>
 	</bean>
+-->
 	
 	<!-- JMX -->
 	<bean id="mbeanServer" class="org.springframework.jmx.support.MBeanServerFactoryBean">
