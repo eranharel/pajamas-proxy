@@ -1,7 +1,6 @@
 package com.outbrain.pajamasproxy.memcached.proxy;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,16 +8,12 @@ import java.util.Map;
 import java.util.Set;
 
 import net.spy.memcached.CASResponse;
-import net.spy.memcached.ConnectionFactoryBuilder;
-import net.spy.memcached.ConnectionFactoryBuilder.Locator;
-import net.spy.memcached.ConnectionFactoryBuilder.Protocol;
 import net.spy.memcached.MemcachedClient;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
-import com.outbrain.pajamasproxy.memcached.adapter.SpyCacheElementTranscoder;
 import com.thimbleware.jmemcached.AbstractCache;
 import com.thimbleware.jmemcached.CacheElement;
 import com.thimbleware.jmemcached.Key;
@@ -31,16 +26,9 @@ public class SpyCacheProxy extends AbstractCache<CacheElement> {
 
   private final MemcachedClient memcachedClient;
 
-  public SpyCacheProxy(final List<InetSocketAddress> servers) throws IOException {
-    Assert.notNull(servers, "servers may not be null");
-
-    final ConnectionFactoryBuilder builder = new ConnectionFactoryBuilder();
-    builder.setProtocol(Protocol.BINARY);
-    builder.setTranscoder(new SpyCacheElementTranscoder());
-    builder.setHashAlg(net.spy.memcached.HashAlgorithm.KETAMA_HASH);
-    builder.setLocatorType(Locator.CONSISTENT);
-    //    builder.setFailureMode(FailureMode.Redistribute);
-    memcachedClient = new net.spy.memcached.MemcachedClient(builder.build(), servers);
+  public SpyCacheProxy(final MemcachedClient memcachedClient) throws IOException {
+    Assert.notNull(memcachedClient, "memcachedClient may not be null");
+    this.memcachedClient = memcachedClient;
   }
 
   @SuppressWarnings("deprecation")
