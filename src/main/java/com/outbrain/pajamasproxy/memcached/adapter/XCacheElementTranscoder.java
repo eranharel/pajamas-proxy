@@ -9,7 +9,12 @@ import org.jboss.netty.buffer.ChannelBuffers;
 import com.thimbleware.jmemcached.CacheElement;
 import com.thimbleware.jmemcached.LocalCacheElement;
 
-public class CacheElementTranscoder implements Transcoder<CacheElement> {
+/**
+ * An adapter between the Jmemcached server and Xmemcached client APIs.
+ * 
+ * @author Eran Harel
+ */
+public class XCacheElementTranscoder implements Transcoder<CacheElement> {
 
   @Override
   public CachedData encode(final CacheElement element) {
