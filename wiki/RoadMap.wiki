@@ -9,3 +9,4 @@
  * Improve monitoring
   * Add performance stats
   * Add connections stats
+ * Add Integration tests
