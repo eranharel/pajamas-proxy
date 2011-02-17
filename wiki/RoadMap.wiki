@@ -7,5 +7,5 @@
  * Improve packaging
  * Improve online docs
  * Improve monitoring
- ** Add performance stats
- ** Add connections stats
+  * Add performance stats
+  * Add connections stats
