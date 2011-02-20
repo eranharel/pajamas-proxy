@@ -7,11 +7,29 @@
     <property name="ignoreUnresolvablePlaceholders" value="false"/>
     <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
     <property name="location" value="file:#{ systemProperties['pajamas.properties'] }"/>
+    <!-- default properties -->
+    <property name="properties">
+      <map>
+        <entry key="pajamas.localPort" value="11511"/>
+        
+        <!-- jmemcached deamon config properties -->
+        <entry key="pajamas.deamon.verbose" value="false"/>
+        <entry key="pajamas.deamon.binary" value="true"/>
+        
+        <!-- spymemcached client config properties -->
+        <entry key="pajamas.client.protocol" value="BINARY"/>
+        <entry key="pajamas.client.hashAlg" value="KETAMA_HASH"/>
+        <entry key="pajamas.client.locatorType" value="CONSISTENT"/>
+        
+        <!-- JMX config properties -->
+        <entry key="pajamas.jmx.http.port" value="8081"/>
+      </map>
+    </property>
   </bean>
 
   <bean id="daemon" class="com.thimbleware.jmemcached.MemCacheDaemon">
     <constructor-arg ref="cacheProxy"/>
-    <property name="binary" value="true"/>
+    <property name="binary" value="${pajamas.deamon.binary}"/>
     <property name="verbose" value="${pajamas.deamon.verbose}"/>
     <property name="addr">
       <bean class="java.net.InetSocketAddress">
@@ -26,12 +44,12 @@
 
   <bean id="memcachedClient" class="net.spy.memcached.utils.MemcachedClientFactoryBean">
     <property name="servers" value="${pajamas.remoteHosts}"/>
-    <property name="protocol" value="BINARY"/>
+    <property name="protocol" value="${pajamas.client.protocol}"/>
     <property name="transcoder">
       <bean class="com.outbrain.pajamasproxy.memcached.adapter.SpyCacheElementTranscoder"/>
     </property>
-    <property name="hashAlg" value="KETAMA_HASH"/>
-    <property name="locatorType" value="CONSISTENT"/>    
+    <property name="hashAlg" value="${pajamas.client.hashAlg}"/>
+    <property name="locatorType" value="${pajamas.client.locatorType}"/>    
   </bean>  
   
 <!-- 
@@ -79,8 +97,7 @@
 	</bean>
 	
   <bean id="httpAdaptor" class="mx4j.tools.adaptor.http.HttpAdaptor">
-    <property name="host" value="0.0.0.0"/>
-    <property name="port" value="8081"/>
+    <property name="port" value="${pajamas.jmx.http.port}"/>
     <property name="processor" ref="xsltProcessor"/>
 	</bean>
 	
