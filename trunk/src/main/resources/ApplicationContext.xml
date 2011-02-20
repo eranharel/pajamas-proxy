@@ -51,30 +51,6 @@
     <property name="hashAlg" value="${pajamas.client.hashAlg}"/>
     <property name="locatorType" value="${pajamas.client.locatorType}"/>    
   </bean>  
-  
-<!-- 
-  <bean id="cacheProxy" class="com.outbrain.pajamasproxy.memcached.proxy.XCacheProxy">
-    <constructor-arg ref="cacheClientFactory"/>
-  </bean>
-
-  <bean id="cacheClientFactory" class="org.springframework.beans.factory.config.ServiceLocatorFactoryBean">
-    <property name="serviceLocatorInterface" value="com.outbrain.pajamasproxy.memcached.proxy.CacheClientFactory"/>
-  </bean>
-
-	<bean name="memcachedClient" class="net.rubyeye.xmemcached.utils.XMemcachedClientFactoryBean" destroy-method="shutdown">
-		<property name="servers" value="${pajamas.remoteHosts}"/>
-		<property name="connectionPoolSize" value="${pajamas.client.connectionPoolSize}"/>
-		<property name="commandFactory">
-			<bean class="net.rubyeye.xmemcached.command.BinaryCommandFactory"/>
-		</property>
-		<property name="sessionLocator">
-			<bean class="net.rubyeye.xmemcached.impl.KetamaMemcachedSessionLocator"/>
-		</property>
-		<property name="transcoder">
-			<bean class="com.outbrain.pajamasproxy.memcached.adapter.XCacheElementTranscoder" />
-		</property>
-	</bean>
--->
 	
 	<!-- JMX -->
 	<bean id="mbeanServer" class="org.springframework.jmx.support.MBeanServerFactoryBean">
