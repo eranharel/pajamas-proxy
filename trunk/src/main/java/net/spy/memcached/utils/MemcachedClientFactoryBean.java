@@ -19,7 +19,22 @@ import org.springframework.beans.factory.FactoryBean;
 
 /**
  * A Spring {@link FactoryBean} creating {@link MemcachedClient} instances.
- * 
+ * <p>
+ * Usage example:
+ * <pre>
+ * {@code
+ * <bean id="memcachedClient" class="net.spy.memcached.utils.MemcachedClientFactoryBean">
+ *   <property name="servers" value="${pajamas.remoteHosts}"/>
+ *   <property name="protocol" value="${pajamas.client.protocol}"/>
+ *   <property name="transcoder">
+ *     <bean class="net.rubyeye.xmemcached.transcoders.SerializingTranscoder"/>
+ *   </property>
+ *   <property name="hashAlg" value="${pajamas.client.hashAlg}"/>
+ *   <property name="locatorType" value="${pajamas.client.locatorType}"/>
+ * </bean>
+ * }
+ * </pre>
+ * </p>
  * @author Eran Harel
  */
 public class MemcachedClientFactoryBean implements FactoryBean<MemcachedClient> {
@@ -29,7 +44,8 @@ public class MemcachedClientFactoryBean implements FactoryBean<MemcachedClient> 
 
   @Override
   public MemcachedClient getObject() throws Exception {
-    return new MemcachedClient(connectionFactoryBuilder.build(), AddrUtil.getAddresses(servers));
+    final MemcachedClient memcachedClient = new MemcachedClient(connectionFactoryBuilder.build(), AddrUtil.getAddresses(servers));
+    return memcachedClient;
   }
 
   @Override
