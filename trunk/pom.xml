@@ -30,23 +30,82 @@
       </plugin>
       
       <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <version>2.2</version>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>appassembler-maven-plugin</artifactId>
+        <version>1.1.1</version>
         <configuration>
-          <descriptorRefs>
-            <descriptorRef>jar-with-dependencies</descriptorRef>            
-          </descriptorRefs>
+          <repositoryLayout>flat</repositoryLayout>
+          <includeConfigurationDirectoryInClasspath>true</includeConfigurationDirectoryInClasspath>
+          
+          <defaultJvmSettings>
+            <initialMemorySize>512M</initialMemorySize>
+            <maxMemorySize>1024M</maxMemorySize>
+            <systemProperties>
+              <systemProperty>pajamas.properties=conf/pajamas.properties</systemProperty>             
+            </systemProperties>
+          </defaultJvmSettings>
+          
+          <daemons>
+            <daemon>
+              <id>pajamasproxy</id>
+              <mainClass>com.outbrain.pajamasproxy.memcached.PajamasProxyDaemon</mainClass>
+              <commandLineArguments>
+                <commandLineArgument>start</commandLineArgument>
+              </commandLineArguments>
+              <platforms>
+                <platform>jsw</platform>
+              </platforms>
+              <generatorConfigurations>
+                <generatorConfiguration>
+                  <generator>jsw</generator>
+                  <includes>
+                    <include>linux-x86-32</include>                    
+                    <include>linux-x86-64</include>                    
+                  </includes>
+                  <configuration>
+                    <property>
+                      <name>set.default.REPO_DIR</name>
+                      <value>lib</value>
+                    </property>
+                    <property>
+                      <name>wrapper.logfile</name>
+                      <value>logs/wrapper.log</value>
+                    </property>
+                  </configuration>
+                </generatorConfiguration>
+              </generatorConfigurations>
+            </daemon>
+          </daemons>
         </configuration>
         <executions>
           <execution>
-            <id>make-assembly</id> <!-- this is used for inheritance merges -->
-            <phase>package</phase> <!-- append to the packaging phase. -->
+            <id>generate-jsw-scripts</id>
+            <phase>package</phase>
+            <goals>
+              <goal>create-repository</goal>
+              <goal>generate-daemons</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.2</version>
+        <configuration>
+          <descriptor>src/main/assembly/assembly.xml</descriptor>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
             <goals>
               <goal>single</goal>              
             </goals>
           </execution>
         </executions>
       </plugin>
+      
     </plugins>
   </build>
 
@@ -67,12 +126,6 @@
       <version>1.2.16</version>
     </dependency>
     
-    <dependency>
-      <groupId>org.jboss.netty</groupId>
-      <artifactId>netty</artifactId>
-      <version>3.2.3.Final</version>
-    </dependency>
-
 		<!-- spring deps are documented here: http://blog.springsource.com/2009/12/02/obtaining-spring-3-artifacts-with-maven/ -->
 		<dependency>
 			<groupId>org.springframework</groupId>
