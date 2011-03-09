@@ -66,6 +66,7 @@
     <property name="beans">
       <map>
         <entry key="com.outbrain.pajamasproxy.memcached.monitor.Statistics:type=Statistics" value-ref="statisticsMBean"/>
+        <entry key="com.outbrain.pajamasproxy.memcached.monitor.CacheCluster:type=Manager" value-ref="cacheClusterMBean"/>
         <entry key="Server:name=httpAdaptor" value-ref="httpAdaptor"/>
         <entry key="Server:name=xsltProcessor" value-ref="xsltProcessor"/>
       </map>
@@ -75,6 +76,10 @@
 	
 	<bean id="statisticsMBean" class="com.outbrain.pajamasproxy.memcached.monitor.Statistics">
     <constructor-arg ref="cacheProxy"/>
+	</bean>
+	
+	<bean id="cacheClusterMBean" class="com.outbrain.pajamasproxy.memcached.monitor.CacheCluster">
+	 <constructor-arg ref="memcachedClient"/>
 	</bean>
 	
   <bean id="httpAdaptor" class="mx4j.tools.adaptor.http.HttpAdaptor">
