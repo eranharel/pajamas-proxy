@@ -2,8 +2,7 @@ package com.outbrain.pajamasproxy.memcached.monitor;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.thimbleware.jmemcached.Cache;
-import com.thimbleware.jmemcached.CacheElement;
+import com.outbrain.pajamasproxy.memcached.proxy.MemcachedProxyStatistics;
 
 /**
  * The implementation of the {@link StatisticsMBean} interface.
@@ -12,14 +11,14 @@ import com.thimbleware.jmemcached.CacheElement;
  */
 class Statistics implements StatisticsMBean {
 
-  private final Cache<CacheElement> cache;
+  private final MemcachedProxyStatistics proxyStatistics;
 
   // TODO these should be somehow fetched from JMemcached MemcachedCommandHandler
   private final AtomicInteger currConnectionCount = new AtomicInteger();
   private final AtomicInteger totalConnectionCount = new AtomicInteger();
 
-  public Statistics(final Cache<CacheElement> cache) {
-    this.cache = cache;
+  public Statistics(final MemcachedProxyStatistics proxyStatistics) {
+    this.proxyStatistics = proxyStatistics;
   }
 
   @Override
@@ -34,22 +33,31 @@ class Statistics implements StatisticsMBean {
 
   @Override
   public int getGetCommands() {
-    return cache.getGetCmds();
+    return proxyStatistics.getGetCommands();
   }
 
   @Override
   public int getSetCommands() {
-    return cache.getSetCmds();
+    return proxyStatistics.getSetCommands();
   }
 
   @Override
   public int getGetHits() {
-    return cache.getGetHits();
+    return proxyStatistics.getGetHits();
   }
 
   @Override
   public int getGetMisses() {
-    return cache.getGetMisses();
+    return proxyStatistics.getGetMisses();
   }
 
+  @Override
+  public int getErrors() {
+    return proxyStatistics.getErrors();
+  }
+
+  @Override
+  public int getTimeouts() {
+    return proxyStatistics.getTimeouts();
+  }
 }

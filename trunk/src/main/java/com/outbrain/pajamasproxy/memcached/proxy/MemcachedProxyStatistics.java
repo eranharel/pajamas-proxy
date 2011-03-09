@@ -1,15 +1,11 @@
-package com.outbrain.pajamasproxy.memcached.monitor;
+package com.outbrain.pajamasproxy.memcached.proxy;
 
 /**
- * Aggregates the proxy statistics metrics.
+ * An API for the proxy statistical metrics.
  * 
  * @author Eran Harel
  */
-public interface StatisticsMBean {
-
-  public int getCurrentConnectionCount();
-
-  public int getTotalConnectionCount();
+public interface MemcachedProxyStatistics {
 
   /**
    * @return The cache get commands count for the entire proxied cluster.
@@ -40,5 +36,4 @@ public interface StatisticsMBean {
    * @return The number of failed operations since startup.
    */
   public abstract int getErrors();
-
 }
