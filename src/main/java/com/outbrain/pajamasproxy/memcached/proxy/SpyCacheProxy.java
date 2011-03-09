@@ -6,9 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import net.spy.memcached.CASResponse;
 import net.spy.memcached.MemcachedClientIF;
+import net.spy.memcached.OperationTimeoutException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,11 +20,14 @@ import com.thimbleware.jmemcached.AbstractCache;
 import com.thimbleware.jmemcached.CacheElement;
 import com.thimbleware.jmemcached.Key;
 
-public class SpyCacheProxy extends AbstractCache<CacheElement> {
+public class SpyCacheProxy extends AbstractCache<CacheElement> implements MemcachedProxyStatistics {
 
   private static final Charset DEFAULT_CHARSET = Charset.forName("utf-8");
 
   private static Logger log = LoggerFactory.getLogger(SpyCacheProxy.class);
+
+  private final AtomicInteger errors = new AtomicInteger();
+  private final AtomicInteger timeouts = new AtomicInteger();
 
   private final MemcachedClientIF memcachedClient;
 
@@ -195,6 +200,16 @@ public class SpyCacheProxy extends AbstractCache<CacheElement> {
   }
 
   @Override
+  public int getGetCommands() {
+    return super.getGetCmds();
+  }
+
+  @Override
+  public int getSetCommands() {
+    return super.getSetCmds();
+  }
+
+  @Override
   public long getCurrentItems() {
     // TODO Auto-generated method stub
     return 0;
@@ -222,11 +237,26 @@ public class SpyCacheProxy extends AbstractCache<CacheElement> {
     return key.bytes.toString(DEFAULT_CHARSET);
   }
 
+  @Override
+  public int getErrors() {
+    return errors.get();
+  }
+
+  @Override
+  public int getTimeouts() {
+    return timeouts.get();
+  }
+
   private void handleClientException(final String command, final Exception e) {
+    errors.incrementAndGet();
+
     final String message = new StringBuilder("Failed to execute ").append(command).append(" command").toString();
     log.error(message, e);
     if (e instanceof InterruptedException) {
       Thread.currentThread().interrupt();
+    }
+    if (e instanceof OperationTimeoutException) {
+      timeouts.incrementAndGet();
     }
 
     throw new RuntimeException(message);
