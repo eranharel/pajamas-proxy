@@ -19,9 +19,9 @@ Pajamas-Proxy was tested on several Linux platforms (Ubuntu 10.10, CentOS 5.5, b
 
 * JDK 6 or above must be installed
 
-= Installing on a Linux machine =
+= Installing and using on a Linux machine =
 
-The steps below explain how to download and install the binary distribution on a Linux system.
+The steps below explain how to download and install the binary distribution on a Linux system. It should be rather trivial to do the same on any other platform.
 
 # Fetch the latest distribution from the [http://code.google.com/p/pajamas-proxy/downloads/list downloads] page.
 # Unpack the archive into a directory of your choice.
@@ -30,3 +30,38 @@ The steps below explain how to download and install the binary distribution on a
  # Most properties have defaults set to a reasonable value. See the docs inside the `pajamas.properties` file.
 # In case java is not in your path, edit the `<pajamas-install-dir>/conf/wrapper.conf` file
  # You may also change other settings for the pajamas deamon in the `<pajamas-install-dir>/conf/wrapper.conf` file
+
+== Starting Pajamas-Proxy (deamon) ==
+
+{{{
+cd [pajamas_install_dir]
+bin/pajamasproxy start
+}}}
+
+== Starting Pajamas-Proxy (console) ==
+
+{{{
+cd [pajamas_install_dir]
+bin/pajamasproxy console
+}}}
+
+== Stopping Pajamas-Proxy (deamon) ==
+
+{{{
+cd [pajamas_install_dir]
+bin/pajamasproxy stop
+}}}
+
+== Restarting Pajamas-Proxy ==
+
+{{{
+cd [pajamas_install_dir]
+bin/pajamasproxy restart
+}}}
+
+== Pajamas-Proxy status ==
+
+{{{
+cd [pajamas_install_dir]
+bin/pajamasproxy status
+}}}
