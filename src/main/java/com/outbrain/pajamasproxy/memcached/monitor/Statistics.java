@@ -10,7 +10,7 @@ import com.thimbleware.jmemcached.CacheElement;
  * 
  * @author Eran Harel
  */
-public class Statistics implements StatisticsMBean {
+class Statistics implements StatisticsMBean {
 
   private final Cache<CacheElement> cache;
 
