@@ -1,0 +1,32 @@
+#summary This document describes how to install and configure Pajamas-Proxy on a Linux machine.
+#labels installation,readme,gettingstarted,configuration
+
+= Introduction =
+
+Pajamas-Proxy was tested on several Linux platforms (Ubuntu 10.10, CentOS 5.5, both 64 bit version), but it should run on any [http://wrapper.tanukisoftware.com/doc/english/supported-platforms-350.html platform supported by Java Service Wrapper].
+
+= Requirements =
+
+== Hardware ==
+
+* 10MB of free disk space for the binary distribution
+
+== Operating System ==
+
+* See here: http://wrapper.tanukisoftware.com/doc/english/supported-platforms-350.html
+
+== Environment ==
+
+* JDK 6 or above must be installed
+
+= Installing on a Linux machine =
+
+The steps below explain how to download and install the binary distribution on a Linux system.
+
+# Fetch the latest distribution from the [http://code.google.com/p/pajamas-proxy/downloads/list downloads] page.
+# Unpack the archive into a directory of your choice.
+# Edit the `pajamas.properties` file located at `<pajamas-install-dir>/conf`
+ # You must at least specify the `pajamas.remoteHosts` property to point to your memcached hosts.
+ # Most properties have defaults set to a reasonable value. See the docs inside the `pajamas.properties` file.
+# In case java is not in your path, edit the `<pajamas-install-dir>/conf/wrapper.conf` file
+ # You may also change other settings for the pajamas deamon in the `<pajamas-install-dir>/conf/wrapper.conf` file
