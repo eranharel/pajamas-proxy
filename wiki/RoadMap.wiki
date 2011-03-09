@@ -4,6 +4,7 @@
 = Road Map =
 
  * Improve performance
+ * Add an internal in-RAM cache
  * Improve online docs
  * Improve monitoring
   * Add performance stats
