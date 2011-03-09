@@ -1,0 +1,34 @@
+#summary How to monitor Pajamas-Proxy.
+#labels jmx,monitoring,http
+
+= Pajamas-Proxy Monitoring In a Nut Shell =
+
+Monitoring and managing pajamas-proxy is fairly simple. We expose [http://en.wikipedia.org/wiki/Java_Management_Extensions JMX] MBeans via HTTP and RMI.
+
+It should be native to Java developers.
+
+== Monitoring details ==
+
+By default pajamas-proxy exposes it's MBeans on JMX port 9999, and on HTTP port 8081, and doesn't perform authentication.
+
+=== Configuring JMX ===
+
+ * In order to change remote connection details, edit `<instal-dir>/conf/wrapper.conf`:
+{{{
+wrapper.java.additional.2=-Dcom.sun.management.jmxremote.port=9999
+wrapper.java.additional.3=-Dcom.sun.management.jmxremote.authenticate=false
+wrapper.java.additional.4=-Dcom.sun.management.jmxremote.ssl=false
+}}}
+
+You may change the JMX remote port, authentication and method.
+
+ * In order to change the HTTP host and port, edit `<instal-dir>/conf/pajamas.properties`:
+{{{
+# used for JMX HTTP adaptor. (default=0.0.0.0)
+#pajamas.jmx.http.host=0.0.0.0
+
+# Port used for JMX HTTP adaptor. (default=8081)
+#pajamas.jmx.http.port=8081
+}}}
+
+You may change the HTTP host and port the application will listen to.
