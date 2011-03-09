@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import net.spy.memcached.CASResponse;
-import net.spy.memcached.MemcachedClient;
+import net.spy.memcached.MemcachedClientIF;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,19 +24,18 @@ public class SpyCacheProxy extends AbstractCache<CacheElement> {
 
   private static Logger log = LoggerFactory.getLogger(SpyCacheProxy.class);
 
-  private final MemcachedClient memcachedClient;
+  private final MemcachedClientIF memcachedClient;
 
-  public SpyCacheProxy(final MemcachedClient memcachedClient) throws IOException {
+  public SpyCacheProxy(final MemcachedClientIF memcachedClient) throws IOException {
     Assert.notNull(memcachedClient, "memcachedClient may not be null");
     this.memcachedClient = memcachedClient;
   }
 
-  @SuppressWarnings("deprecation")
   @Override
   public DeleteResponse delete(final Key key, final int time) {
     boolean wasSuccess = false;
     try {
-      wasSuccess = memcachedClient.delete(toStringKey(key), time).get();
+      wasSuccess = memcachedClient.delete(toStringKey(key)).get();
     } catch (final Exception e) {
       handleClientException("delete", e);
     }

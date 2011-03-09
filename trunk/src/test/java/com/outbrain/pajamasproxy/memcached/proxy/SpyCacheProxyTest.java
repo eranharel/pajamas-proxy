@@ -16,7 +16,7 @@ import java.util.concurrent.TimeoutException;
 
 import junit.framework.Assert;
 import net.spy.memcached.CASResponse;
-import net.spy.memcached.MemcachedClient;
+import net.spy.memcached.MemcachedClientIF;
 
 import org.jboss.netty.buffer.ChannelBuffers;
 import org.junit.After;
@@ -44,7 +44,7 @@ public class SpyCacheProxyTest {
   private static final Future<Boolean> FAILED_OP = new MockFutureOperation(false);
 
   @Mock
-  private MemcachedClient clientMock;
+  private MemcachedClientIF clientMock;
   private SpyCacheProxy cacheProxy;
 
   @Before
@@ -59,29 +59,27 @@ public class SpyCacheProxyTest {
     cacheProxy = null;
   }
 
-  @SuppressWarnings("deprecation")
   @Test
   public void testDelete_success() {
     final int time = 30;
 
-    when(clientMock.delete(TEST_KEY_STRING1, time)).thenReturn(SUCCESSFUL_OP);
+    when(clientMock.delete(TEST_KEY_STRING1)).thenReturn(SUCCESSFUL_OP);
 
     final DeleteResponse deleteResponse = cacheProxy.delete(KEY1, time);
 
-    verify(clientMock).delete(TEST_KEY_STRING1, time);
+    verify(clientMock).delete(TEST_KEY_STRING1);
     assertEquals("delete response", DeleteResponse.DELETED, deleteResponse);
   }
 
-  @SuppressWarnings("deprecation")
   @Test
   public void testDelete_fail() {
     final int time = 30;
 
-    when(clientMock.delete(TEST_KEY_STRING1, time)).thenReturn(FAILED_OP);
+    when(clientMock.delete(TEST_KEY_STRING1)).thenReturn(FAILED_OP);
 
     final DeleteResponse deleteResponse = cacheProxy.delete(KEY1, time);
 
-    verify(clientMock).delete(TEST_KEY_STRING1, time);
+    verify(clientMock).delete(TEST_KEY_STRING1);
     assertEquals("delete response", DeleteResponse.NOT_FOUND, deleteResponse);
   }
 
