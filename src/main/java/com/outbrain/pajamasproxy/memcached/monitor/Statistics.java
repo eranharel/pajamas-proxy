@@ -5,6 +5,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.thimbleware.jmemcached.Cache;
 import com.thimbleware.jmemcached.CacheElement;
 
+/**
+ * The implementation of the {@link StatisticsMBean} interface.
+ * 
+ * @author Eran Harel
+ */
 public class Statistics implements StatisticsMBean {
 
   private final Cache<CacheElement> cache;
