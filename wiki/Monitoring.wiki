@@ -11,6 +11,13 @@ It should be native to Java developers.
 
 By default pajamas-proxy exposes it's MBeans on JMX port 9999, and on HTTP port 8081, and doesn't perform authentication.
 
+=== Exposed MBeans ===
+
+The daemon exposes 2 MBeans:
+
+ * *com.outbrain.pajamasproxy.memcached.monitor.CacheCluster:type=Manager* - provides means for interacting, and controlling the cache client.
+ * *com.outbrain.pajamasproxy.memcached.monitor.Statistics:type=Statistics* - Aggregates the proxy statistics metrics, like hits / misses / errors / etc.
+
 === Configuring JMX ===
 
  * In order to change remote connection details, edit `<instal-dir>/conf/wrapper.conf`:
@@ -32,3 +39,14 @@ You may change the JMX remote port, authentication and method.
 }}}
 
 You may change the HTTP host and port the application will listen to.
+
+=== Using a web browser ===
+
+In order to access the pajamas-proxy JMX HTTP adaptor via a web browser, browse to the host:port as specified above. For example http://localhost:8081/.
+
+=== Using JConsole ===
+
+In order to access the pajamas-proxy JMX from [http://java.sun.com/developer/technicalArticles/J2SE/jconsole.html JConsole] specify the host:port as provided above. For example:
+{{{
+jconsole localhost:9999
+}}}
