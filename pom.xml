@@ -4,7 +4,7 @@
 
   <groupId>com.outbrain</groupId>
   <artifactId>pajamas-proxy</artifactId>
-  <version>0.1-SNAPSHOT</version>
+  <version>0.2-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>pajamas-proxy</name>
@@ -41,7 +41,10 @@
             <initialMemorySize>512M</initialMemorySize>
             <maxMemorySize>1024M</maxMemorySize>
             <systemProperties>
-              <systemProperty>pajamas.properties=conf/pajamas.properties</systemProperty>             
+              <systemProperty>pajamas.properties=conf/pajamas.properties</systemProperty>  
+              <systemProperty>com.sun.management.jmxremote.port=9999</systemProperty>
+              <systemProperty>com.sun.management.jmxremote.authenticate=false</systemProperty>
+              <systemProperty>com.sun.management.jmxremote.ssl=false</systemProperty>
             </systemProperties>
           </defaultJvmSettings>
           
