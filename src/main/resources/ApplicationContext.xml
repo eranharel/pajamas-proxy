@@ -17,11 +17,13 @@
         <entry key="pajamas.deamon.binary" value="true"/>
         
         <!-- spymemcached client config properties -->
+		    <entry key="pajamas.client.operationTimeout" value="5000"/>
+		    <entry key="pajamas.client.timeoutExceptionThreshold" value="1998"/>
         <entry key="pajamas.client.protocol" value="BINARY"/>
         <entry key="pajamas.client.hashAlg" value="KETAMA_HASH"/>
         <entry key="pajamas.client.locatorType" value="CONSISTENT"/>
         <entry key="pajamas.client.usenagle" value="true"/>
-        <entry key="pajamas.client.failureMode" value="Retry"/>
+        <entry key="pajamas.client.failureMode" value="Redistribute"/>
         
         <!-- JMX config properties -->
         <entry key="pajamas.jmx.http.port" value="8081"/>
@@ -51,6 +53,8 @@
     <property name="transcoder">
       <bean class="com.outbrain.pajamasproxy.memcached.adapter.SpyCacheElementTranscoder"/>
     </property>
+    <property name="opTimeout" value="${pajamas.client.operationTimeout}"/>
+    <property name="timeoutExceptionThreshold" value="${pajamas.client.timeoutExceptionThreshold}"/>
     <property name="hashAlg" value="${pajamas.client.hashAlg}"/>
     <property name="locatorType" value="${pajamas.client.locatorType}"/>
     <property name="failureMode" value="${pajamas.client.failureMode}"/>
