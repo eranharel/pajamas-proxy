@@ -1,12 +1,15 @@
 package com.outbrain.pajamasproxy.memcached.proxy;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -232,16 +235,36 @@ public class SpyCacheProxyTest {
   }
 
   @Test
-  public void testGet() {
+  public void testGet_allHits() {
     final Collection<String> keys = Arrays.asList(TEST_KEY_STRING2, TEST_KEY_STRING1);
     final Map<String, Object> values = new HashMap<String, Object>();
     values.put(TEST_KEY_STRING1, CACHE_ELEMENT);
-    values.put(TEST_KEY_STRING2, new LocalCacheElement(KEY2, 0x6, 10, 0));
+    final LocalCacheElement cacheElement2 = new LocalCacheElement(KEY2, 0x6, 10, 0);
+    values.put(TEST_KEY_STRING2, cacheElement2);
     when(clientMock.getBulk(keys)).thenReturn(values);
 
     final CacheElement[] cacheElements = cacheProxy.get(KEY2, KEY1);
 
     assertEquals("num returned values", values.size(), cacheElements.length);
+    assertEquals(cacheElement2, cacheElements[0]);
+    assertEquals(CACHE_ELEMENT, cacheElements[1]);
+  }
+
+  @Test
+  public void testGet_allMiss() {
+    final Collection<String> keys = Arrays.asList(TEST_KEY_STRING2, TEST_KEY_STRING1);
+    final Map<String, Object> values = Collections.emptyMap();
+    when(clientMock.getBulk(keys)).thenReturn(values);
+
+    final CacheElement[] cacheElements = cacheProxy.get(KEY2, KEY1);
+
+    assertNotNull("elements shouldn't be null", cacheElements);
+    assertEquals("num returned values", 2, cacheElements.length);
+
+    for (final CacheElement cacheElement : cacheElements) {
+      // TODO I'm not sure this is OK... it generates client warnings in WhalinTranscoder
+      assertNull(cacheElement);
+    }
   }
 
   @Test
