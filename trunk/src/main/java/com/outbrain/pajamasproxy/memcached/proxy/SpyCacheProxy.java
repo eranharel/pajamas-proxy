@@ -155,16 +155,28 @@ public class SpyCacheProxy extends AbstractCache<CacheElement> implements Memcac
 
     try {
       final Map<String, Object> values = memcachedClient.getBulk(stringKeys);
-      final int hits = values.size();
-      final int misses = keys.length - hits;
-      getMisses.addAndGet(misses);
-      getHits.addAndGet(hits);
-      return values.isEmpty() ? null : values.values().toArray(new CacheElement[values.size()]);
+
+      updateGetStatistics(values, keys);
+
+      final CacheElement[] response = new CacheElement[keys.length];
+      int i = 0;
+      for (final String key : stringKeys) {
+        response[i++] = (CacheElement) values.get(key);
+      }
+
+      return response;
     } catch (final Exception e) {
       handleClientException("get", e);
     }
 
     return null;
+  }
+
+  private void updateGetStatistics(final Map<String, Object> values, final Key... keys) {
+    final int hits = values.size();
+    final int misses = keys.length - hits;
+    getMisses.addAndGet(misses);
+    getHits.addAndGet(hits);
   }
 
   @Override
