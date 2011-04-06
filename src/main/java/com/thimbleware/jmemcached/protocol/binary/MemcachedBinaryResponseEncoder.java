@@ -133,7 +133,6 @@ public class MemcachedBinaryResponseEncoder extends SimpleChannelUpstreamHandler
   @Override
   public void messageReceived(final ChannelHandlerContext channelHandlerContext, final MessageEvent messageEvent) throws Exception {
     final ResponseMessage command = (ResponseMessage) messageEvent.getMessage();
-    final Object additional = messageEvent.getMessage();
 
     final MemcachedBinaryCommandDecoder.BinaryOp bcmd = MemcachedBinaryCommandDecoder.BinaryOp.forCommandMessage(command.cmd);
 
