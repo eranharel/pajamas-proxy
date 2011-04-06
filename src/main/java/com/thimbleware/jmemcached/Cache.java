@@ -113,22 +113,6 @@ public interface Cache {
    */
   void close() throws IOException;
 
-
-  /**
-   * @return the # of items in the cache
-   */
-  long getCurrentItems();
-
-  /**
-   * @return the maximum size of the cache (in bytes)
-   */
-  long getLimitMaxBytes();
-
-  /**
-   * @return the current cache usage (in bytes)
-   */
-  long getCurrentBytes();
-
   /**
    * @return the number of get commands executed
    */
@@ -154,12 +138,6 @@ public interface Cache {
    * @param arg a specific extended stat sub-category
    * @return a map of stats
    */
-  Map<String, Set<String>> stat(String arg);
-
-  /**
-   * Called periodically by the network event loop to process any pending events.
-   * (such as delete queues, etc.)
-   */
-  void asyncEventPing();
+  Map<String, Set<String>> stats(String arg);
 
 }

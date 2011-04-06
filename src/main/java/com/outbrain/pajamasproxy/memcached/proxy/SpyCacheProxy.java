@@ -5,7 +5,6 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import net.spy.memcached.CASResponse;
@@ -207,11 +206,6 @@ public class SpyCacheProxy extends AbstractCache implements MemcachedProxyStatis
   }
 
   @Override
-  protected Set<Key> keys() {
-    throw new UnsupportedOperationException("WTF???");
-  }
-
-  @Override
   public int getGetCommands() {
     return super.getGetCmds();
   }
@@ -219,30 +213,6 @@ public class SpyCacheProxy extends AbstractCache implements MemcachedProxyStatis
   @Override
   public int getSetCommands() {
     return super.getSetCmds();
-  }
-
-  @Override
-  public long getCurrentItems() {
-    // TODO Auto-generated method stub
-    return 0;
-  }
-
-  @Override
-  public long getLimitMaxBytes() {
-    // TODO Auto-generated method stub
-    return 0;
-  }
-
-  @Override
-  public long getCurrentBytes() {
-    // TODO Auto-generated method stub
-    return 0;
-  }
-
-  @Override
-  public void asyncEventPing() {
-    // TODO Auto-generated method stub
-
   }
 
   private String toStringKey(final Key key) {

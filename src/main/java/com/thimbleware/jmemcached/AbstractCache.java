@@ -27,25 +27,6 @@ public abstract class AbstractCache implements Cache {
     initStats();
   }
 
-  /**
-   * @return the current time in seconds (from epoch), used for expiries, etc.
-   */
-  public static int Now() {
-    return (int) (System.currentTimeMillis() / 1000);
-  }
-
-  protected abstract Set<Key> keys();
-
-  @Override
-  public abstract long getCurrentItems();
-
-  @Override
-  public abstract long getLimitMaxBytes();
-
-  @Override
-  public abstract long getCurrentBytes();
-
-
   @Override
   public final int getGetCmds() {
     return getCmds.get();
@@ -73,7 +54,7 @@ public abstract class AbstractCache implements Cache {
    * @return the full command response
    */
   @Override
-  public final Map<String, Set<String>> stat(final String arg) {
+  public final Map<String, Set<String>> stats(final String arg) {
     final Map<String, Set<String>> result = new HashMap<String, Set<String>>();
 
     // stats we know
@@ -82,11 +63,13 @@ public abstract class AbstractCache implements Cache {
     multiSet(result, "cmd_sets", valueOf(getSetCmds()));
     multiSet(result, "get_hits", valueOf(getGetHits()));
     multiSet(result, "get_misses", valueOf(getGetMisses()));
-    multiSet(result, "time", valueOf(valueOf(Now())));
-    multiSet(result, "uptime", valueOf(Now() - this.started.longValue()));
-    multiSet(result, "cur_items", valueOf(this.getCurrentItems()));
-    multiSet(result, "limit_maxbytes", valueOf(this.getLimitMaxBytes()));
-    multiSet(result, "current_bytes", valueOf(this.getCurrentBytes()));
+    multiSet(result, "time", valueOf(valueOf(now())));
+    multiSet(result, "uptime", valueOf(now() - this.started.longValue()));
+
+    // TODO get these from spymemcached if we can
+    //    multiSet(result, "cur_items", valueOf(this.getCurrentItems()));
+    //    multiSet(result, "limit_maxbytes", valueOf(this.getLimitMaxBytes()));
+    //    multiSet(result, "current_bytes", valueOf(this.getCurrentBytes()));
     multiSet(result, "free_bytes", valueOf(Runtime.getRuntime().freeMemory()));
 
     // Not really the same thing precisely, but meaningful nonetheless. potentially this should be renamed
@@ -126,6 +109,10 @@ public abstract class AbstractCache implements Cache {
 
   }
 
-  @Override
-  public abstract void asyncEventPing();
+  /**
+   * @return the current time in seconds (from epoch).
+   */
+  private int now() {
+    return (int) (System.currentTimeMillis() / 1000);
+  }
 }

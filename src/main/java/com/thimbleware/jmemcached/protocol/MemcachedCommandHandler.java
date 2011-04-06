@@ -140,7 +140,7 @@ public final class MemcachedCommandHandler extends SimpleChannelUpstreamHandler 
     final int cmdKeysSize = command.keys == null ? 0 : command.keys.size();
 
     // first process any messages in the delete queue
-    cache.asyncEventPing();
+    //cache.asyncEventPing();
 
     // now do the real work
     if (this.verbose) {
@@ -240,7 +240,7 @@ public final class MemcachedCommandHandler extends SimpleChannelUpstreamHandler 
     if (cmdKeysSize > 0) {
       option = command.keys.get(0).bytes.toString();
     }
-    Channels.fireMessageReceived(channelHandlerContext, new ResponseMessage(command).withStatResponse(cache.stat(option)), channel.getRemoteAddress());
+    Channels.fireMessageReceived(channelHandlerContext, new ResponseMessage(command).withStatResponse(cache.stats(option)), channel.getRemoteAddress());
   }
 
   protected void handleDelete(final ChannelHandlerContext channelHandlerContext, final CommandMessage command, final Channel channel) {
