@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+  <bean id="cacheProxy" class="com.outbrain.pajamasproxy.memcached.proxy.SpyCacheProxy">
+    <constructor-arg ref="memcachedClient"/>
+  </bean>
+
+  <bean id="memcachedClient" class="net.spy.memcached.utils.MemcachedClientFactoryBean">
+    <property name="servers" value="${pajamas.remoteHosts}"/>
+    <property name="protocol" value="${pajamas.client.protocol}"/>
+    <property name="transcoder">
+      <bean class="com.outbrain.pajamasproxy.memcached.adapter.SpyCacheElementTranscoder"/>
+    </property>
+    <property name="opTimeout" value="${pajamas.client.operationTimeout}"/>
+    <property name="timeoutExceptionThreshold" value="${pajamas.client.timeoutExceptionThreshold}"/>
+    <property name="hashAlg" value="${pajamas.client.hashAlg}"/>
+    <property name="locatorType" value="${pajamas.client.locatorType}"/>
+    <property name="failureMode" value="${pajamas.client.failureMode}"/>
+    <property name="useNagleAlgorithm" value="${pajamas.client.usenagle}"/>
+  </bean>  
+	
+</beans>

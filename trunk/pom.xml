@@ -62,8 +62,8 @@
                 <generatorConfiguration>
                   <generator>jsw</generator>
                   <includes>
-                    <include>linux-x86-32</include>                    
-                    <include>linux-x86-64</include>                    
+                    <include>linux-x86-32</include>
+                    <include>linux-x86-64</include>
                   </includes>
                   <configuration>
                     <property>
@@ -147,9 +147,9 @@
 		</dependency>
 
     <dependency>
-      <groupId>com.thimbleware.jmemcached</groupId>
-      <artifactId>jmemcached-core</artifactId>
-      <version>1.0.0</version>
+      <groupId>org.jboss.netty</groupId>
+      <artifactId>netty</artifactId>
+      <version>3.2.4.Final</version>
     </dependency>
 
     <dependency>
