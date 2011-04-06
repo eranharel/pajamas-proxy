@@ -28,12 +28,6 @@ public interface CacheElement extends Serializable {
 
   void setCasUnique(long casUnique);
 
-  boolean isBlocked();
-
-  void block(long blockedUntil);
-
-  long getBlockedUntil();
-
   CacheElement append(CacheElement element);
 
   CacheElement prepend(CacheElement element);
