@@ -20,7 +20,7 @@ import com.thimbleware.jmemcached.AbstractCache;
 import com.thimbleware.jmemcached.CacheElement;
 import com.thimbleware.jmemcached.Key;
 
-public class SpyCacheProxy extends AbstractCache<CacheElement> implements MemcachedProxyStatistics {
+public class SpyCacheProxy extends AbstractCache implements MemcachedProxyStatistics {
 
   private static final Charset DEFAULT_CHARSET = Charset.forName("utf-8");
 
