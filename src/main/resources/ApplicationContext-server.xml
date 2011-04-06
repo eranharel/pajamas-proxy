@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+  <bean id="daemon" class="com.thimbleware.jmemcached.MemCacheDaemon" destroy-method="stop">
+    <constructor-arg ref="cacheProxy"/>
+    <constructor-arg ref="channelFactory"/>
+    <constructor-arg ref="allChannels"/>
+    <constructor-arg ref="serverBootstrap"/>
+    
+    <property name="addr">
+      <bean class="java.net.InetSocketAddress">
+        <constructor-arg value="${pajamas.localPort}"/>
+      </bean>
+    </property>
+  </bean>
+  
+  <bean id="channelFactory" class="org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory">
+    <constructor-arg>
+      <bean class="java.util.concurrent.Executors" factory-method="newCachedThreadPool"/>
+    </constructor-arg>
+    <constructor-arg>
+      <bean class="java.util.concurrent.Executors" factory-method="newCachedThreadPool"/>
+    </constructor-arg>
+  </bean>
+  
+  <bean id="allChannels" class="org.jboss.netty.channel.group.DefaultChannelGroup">
+    <constructor-arg value="jmemcachedChannelGroup"/>
+  </bean>
+  
+  <bean id="serverBootstrap" class="org.jboss.netty.bootstrap.ServerBootstrap">
+    <constructor-arg ref="channelFactory"/>
+    <property name="pipelineFactory">
+      <bean class="com.thimbleware.jmemcached.protocol.binary.MemcachedBinaryPipelineFactory">
+        <constructor-arg ref="cacheProxy"/>
+        <constructor-arg value="1.0"/><!-- TODO pass this from maven? -->
+        <constructor-arg value="${pajamas.deamon.verbose}"/>
+        <constructor-arg ref="allChannels"/>
+      </bean>
+    </property>
+    <property name="options">
+      <map>
+        <entry key="sendBufferSize" value="65536"/>
+        <entry key="receiveBufferSize" value="65536"/>
+      </map>
+    </property>
+  </bean>
+</beans>
