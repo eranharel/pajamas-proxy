@@ -35,8 +35,6 @@ public final class LocalCacheElement implements CacheElement, Externalizable {
   private ChannelBuffer data;
   private Key key;
   private long casUnique = 0L;
-  private boolean blocked = false;
-  private long blockedUntil;
 
   public LocalCacheElement(final Key key) {
     this.key = key;
@@ -145,12 +143,6 @@ public final class LocalCacheElement implements CacheElement, Externalizable {
 
     final LocalCacheElement that = (LocalCacheElement) o;
 
-    if (blocked != that.blocked) {
-      return false;
-    }
-    if (blockedUntil != that.blockedUntil) {
-      return false;
-    }
     if (casUnique != that.casUnique) {
       return false;
     }
@@ -177,8 +169,6 @@ public final class LocalCacheElement implements CacheElement, Externalizable {
     result = 31 * result + (data != null ? data.hashCode() : 0);
     result = 31 * result + key.hashCode();
     result = 31 * result + (int) (casUnique ^ (casUnique >>> 32));
-    result = 31 * result + (blocked ? 1 : 0);
-    result = 31 * result + (int) (blockedUntil ^ (blockedUntil >>> 32));
     return result;
   }
 
@@ -213,26 +203,9 @@ public final class LocalCacheElement implements CacheElement, Externalizable {
   }
 
   @Override
-  public boolean isBlocked() {
-    return blocked;
-  }
-
-  @Override
-  public long getBlockedUntil() {
-    return blockedUntil;
-  }
-
-  @Override
   public void setCasUnique(final long casUnique) {
     this.casUnique = casUnique;
   }
-
-  @Override
-  public void block(final long blockedUntil) {
-    this.blocked = true;
-    this.blockedUntil = blockedUntil;
-  }
-
 
   @Override
   public void setData(final ChannelBuffer data) {
@@ -258,8 +231,6 @@ public final class LocalCacheElement implements CacheElement, Externalizable {
     in.read(keyBytes);
     key = new Key(ChannelBuffers.wrappedBuffer(keyBytes));
     casUnique = in.readLong();
-    blocked = in.readBoolean();
-    blockedUntil = in.readLong();
   }
 
   @Override
@@ -272,7 +243,5 @@ public final class LocalCacheElement implements CacheElement, Externalizable {
     out.write(key.bytes.capacity());
     out.write(key.bytes.copy().array());
     out.writeLong(casUnique);
-    out.writeBoolean(blocked);
-    out.writeLong(blockedUntil);
   }
 }
