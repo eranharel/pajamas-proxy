@@ -4,14 +4,11 @@ import java.io.Serializable;
 
 import org.jboss.netty.buffer.ChannelBuffer;
 
-import com.thimbleware.jmemcached.storage.hash.SizedItem;
-
 /**
  */
-public interface CacheElement extends Serializable, SizedItem {
+public interface CacheElement extends Serializable {
   public final static int THIRTY_DAYS = 2592000;
 
-  @Override
   int size();
 
   @Override
