@@ -13,7 +13,7 @@ By default pajamas-proxy exposes its MBeans on JMX port 9999, and on HTTP port 8
 
 === Exposed MBeans ===
 
-Apart from the standard Java Mbeans, the daemon also exposes the following MBeans:
+Apart from the standard Java MBeans, the daemon also exposes the following MBeans:
 
  * *com.outbrain.pajamasproxy.memcached.monitor.CacheCluster:type=Manager* - provides means for interacting, and controlling the cache client.
  * *com.outbrain.pajamasproxy.memcached.monitor.Statistics:type=Statistics* - Aggregates the proxy statistics metrics, like hits / misses / errors / etc.
