@@ -1,7 +1,7 @@
 #summary How to monitor Pajamas-Proxy.
 #labels jmx,monitoring,http
 
-= Pajamas-Proxy Monitoring In a Nut Shell =
+= Pajamas-Proxy Monitoring In a Nutshell =
 
 Monitoring and managing pajamas-proxy is fairly simple. We expose [http://en.wikipedia.org/wiki/Java_Management_Extensions JMX] MBeans via HTTP and RMI.
 
@@ -9,7 +9,7 @@ It should be native to Java developers.
 
 == Monitoring details ==
 
-By default pajamas-proxy exposes it's MBeans on JMX port 9999, and on HTTP port 8081, and doesn't perform authentication.
+By default pajamas-proxy exposes its MBeans on JMX port 9999, and on HTTP port 8081, and doesn't perform authentication.
 
 === Exposed MBeans ===
 
