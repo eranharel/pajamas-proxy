@@ -15,12 +15,12 @@ By default pajamas-proxy exposes its MBeans on JMX port 9999, and on HTTP port 8
 
 Apart from the standard Java MBeans, the daemon also exposes the following MBeans:
 
- * *com.outbrain.pajamasproxy.memcached.monitor.CacheCluster:type=Manager* - provides means for interacting, and controlling the cache client.
+ * *com.outbrain.pajamasproxy.memcached.monitor.!CacheCluster:type=Manager* - provides means for interacting, and controlling the cache client.
  * *com.outbrain.pajamasproxy.memcached.monitor.Statistics:type=Statistics* - Aggregates the proxy statistics metrics, like hits / misses / errors / etc.
 
 === Configuring JMX ===
 
- * In order to change remote connection details, edit `<instal-dir>/conf/wrapper.conf`:
+ * In order to change remote connection details, edit `<install-dir>/conf/wrapper.conf`:
 {{{
 wrapper.java.additional.2=-Dcom.sun.management.jmxremote.port=9999
 wrapper.java.additional.3=-Dcom.sun.management.jmxremote.authenticate=false
@@ -29,7 +29,7 @@ wrapper.java.additional.4=-Dcom.sun.management.jmxremote.ssl=false
 
 You may change the JMX remote port, authentication and method.
 
- * In order to change the HTTP host and port, edit `<instal-dir>/conf/pajamas.properties`:
+ * In order to change the HTTP host and port, edit `<install-dir>/conf/pajamas.properties`:
 {{{
 # used for JMX HTTP adaptor. (default=0.0.0.0)
 #pajamas.jmx.http.host=0.0.0.0
@@ -42,7 +42,7 @@ You may change the HTTP host and port the application will listen to.
 
 === Using a web browser ===
 
-In order to access the pajamas-proxy JMX HTTP adaptor via a web browser, browse to the host:port as specified above. For example http://localhost:8081/.
+In order to access the pajamas-proxy JMX HTTP adaptor via a web browser, browse to the host:port as specified above. For example: http://localhost:8081/
 
 === Using JConsole ===
 
