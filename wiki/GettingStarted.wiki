@@ -29,9 +29,9 @@ The steps below explain how to download and install the binary distribution on a
   # You must at least specify the `pajamas.remoteHosts` property to point to your memcached hosts.
   # Most properties have defaults set to a reasonable value. See the docs inside the `pajamas.properties` file.
  # In case java is not in your path, edit the `<pajamas-install-dir>/conf/wrapper.conf` file
-  # You may also change other settings for the pajamas deamon in the `<pajamas-install-dir>/conf/wrapper.conf` file
+  # You may also change other settings for the pajamas daemon in the `<pajamas-install-dir>/conf/wrapper.conf` file
 
-== Starting Pajamas-Proxy (deamon) ==
+== Starting Pajamas-Proxy (daemon) ==
 
 {{{
 cd [pajamas_install_dir]
@@ -45,7 +45,7 @@ cd [pajamas_install_dir]
 bin/pajamasproxy console
 }}}
 
-== Stopping Pajamas-Proxy (deamon) ==
+== Stopping Pajamas-Proxy (daemon) ==
 
 {{{
 cd [pajamas_install_dir]
