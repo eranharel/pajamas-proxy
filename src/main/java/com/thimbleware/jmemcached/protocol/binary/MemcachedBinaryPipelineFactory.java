@@ -3,20 +3,25 @@ package com.thimbleware.jmemcached.protocol.binary;
 import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.ChannelPipelineFactory;
 import org.jboss.netty.channel.Channels;
-import org.jboss.netty.channel.group.ChannelGroup;
+import org.springframework.util.Assert;
 
-import com.thimbleware.jmemcached.Cache;
 import com.thimbleware.jmemcached.protocol.MemcachedCommandHandler;
 
 
 public class MemcachedBinaryPipelineFactory implements ChannelPipelineFactory {
 
-  private final MemcachedBinaryCommandDecoder decoder =  new MemcachedBinaryCommandDecoder();
+  private final MemcachedBinaryCommandDecoder decoder;
   private final MemcachedCommandHandler memcachedCommandHandler;
-  private final MemcachedBinaryResponseEncoder memcachedBinaryResponseEncoder = new MemcachedBinaryResponseEncoder();
+  private final MemcachedBinaryResponseEncoder memcachedBinaryResponseEncoder;
 
-  public MemcachedBinaryPipelineFactory(final Cache cache, final String version, final boolean verbose, final ChannelGroup channelGroup) {
-    memcachedCommandHandler = new MemcachedCommandHandler(cache, version, verbose, channelGroup);
+  public MemcachedBinaryPipelineFactory(final MemcachedBinaryCommandDecoder decoder, final MemcachedCommandHandler memcachedCommandHandler, final MemcachedBinaryResponseEncoder memcachedBinaryResponseEncoder) {
+    Assert.notNull(decoder, "decoder may not be null");
+    Assert.notNull(memcachedCommandHandler, "memcachedCommandHandler may not be null");
+    Assert.notNull(memcachedBinaryResponseEncoder, "memcachedBinaryResponseEncoder may not be null");
+
+    this.decoder = decoder;
+    this.memcachedCommandHandler = memcachedCommandHandler;
+    this.memcachedBinaryResponseEncoder = memcachedBinaryResponseEncoder;
   }
 
   @Override
