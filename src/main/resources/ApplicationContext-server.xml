@@ -33,10 +33,13 @@
     <constructor-arg ref="channelFactory"/>
     <property name="pipelineFactory">
       <bean class="com.thimbleware.jmemcached.protocol.binary.MemcachedBinaryPipelineFactory">
-        <constructor-arg ref="cacheProxy"/>
-        <constructor-arg value="1.0"/><!-- TODO pass this from maven? -->
-        <constructor-arg value="${pajamas.deamon.verbose}"/>
-        <constructor-arg ref="allChannels"/>
+        <constructor-arg>
+          <bean class="com.thimbleware.jmemcached.protocol.binary.MemcachedBinaryCommandDecoder"/>
+        </constructor-arg>
+        <constructor-arg ref="memcachedCommandHandler"/>
+        <constructor-arg>
+          <bean class="com.thimbleware.jmemcached.protocol.binary.MemcachedBinaryResponseEncoder"/>
+        </constructor-arg>
       </bean>
     </property>
     <property name="options">
@@ -45,5 +48,12 @@
         <entry key="receiveBufferSize" value="65536"/>
       </map>
     </property>
+  </bean>
+
+  <bean id="memcachedCommandHandler" class="com.thimbleware.jmemcached.protocol.MemcachedCommandHandler">
+    <constructor-arg ref="cacheProxy" />
+    <constructor-arg value="1.0" /><!-- TODO pass this from maven? -->
+    <constructor-arg value="${pajamas.deamon.verbose}" />
+    <constructor-arg ref="allChannels" />
   </bean>
 </beans>
