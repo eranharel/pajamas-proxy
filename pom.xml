@@ -15,7 +15,19 @@
     
     <org.springframework.version>3.0.3.RELEASE</org.springframework.version>
   </properties>
-
+  
+  <repositories>
+		<repository>
+			<id>spy</id>
+			<name>Spy Repository</name>
+			<layout>default</layout>
+			<url>http://bleu.west.spy.net/~dustin/m2repo/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+  </repositories>
+  
   <build>
     <plugins>
       <!-- Set Java version to 1.6 -->
