@@ -7,7 +7,7 @@
     <constructor-arg ref="memcachedClient"/>
   </bean>
 
-  <bean id="memcachedClient" class="net.spy.memcached.utils.MemcachedClientFactoryBean">
+  <bean id="memcachedClient" class="net.spy.memcached.spring.MemcachedClientFactoryBean">
     <property name="servers" value="${pajamas.remoteHosts}"/>
     <property name="protocol" value="${pajamas.client.protocol}"/>
     <property name="transcoder">
