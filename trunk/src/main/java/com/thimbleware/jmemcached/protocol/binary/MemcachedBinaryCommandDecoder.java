@@ -109,10 +109,8 @@ public class MemcachedBinaryCommandDecoder extends FrameDecoder {
     final short opcode = headerBuffer.readUnsignedByte();
     final short keyLength = headerBuffer.readShort();
     final short extraLength = headerBuffer.readUnsignedByte();
-    @SuppressWarnings("unused")
-    final short dataType = headerBuffer.readUnsignedByte();   // unused
-    @SuppressWarnings("unused")
-    final short reserved = headerBuffer.readShort(); // unused
+    /*final short dataType = */headerBuffer.readUnsignedByte(); // unused
+    /*final short reserved = */headerBuffer.readShort(); // unused
     final int totalBodyLength = headerBuffer.readInt();
     final int opaque = headerBuffer.readInt();
     final long cas = headerBuffer.readLong();
@@ -128,6 +126,7 @@ public class MemcachedBinaryCommandDecoder extends FrameDecoder {
     final BinaryOp bcmd = BinaryOp.values()[opcode];
 
     final Op cmdType = bcmd.correspondingOp;
+
     final CommandMessage cmdMessage = CommandMessage.command(cmdType);
     cmdMessage.noreply = bcmd.noreply;
     cmdMessage.cas_key = cas;
@@ -167,8 +166,7 @@ public class MemcachedBinaryCommandDecoder extends FrameDecoder {
         channelBuffer.readBytes(data);
         cmdMessage.element.setData(data);
       } else if (cmdType == Op.INCR || cmdType == Op.DECR) {
-        @SuppressWarnings("unused")
-        final long initialValue = extrasBuffer.readUnsignedInt();
+        /*final long initialValue = */extrasBuffer.readUnsignedInt(); // unused
         final long amount = extrasBuffer.readUnsignedInt();
         final long expiration = extrasBuffer.readUnsignedInt();
 
