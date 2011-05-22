@@ -38,7 +38,7 @@ public enum Op {
   }
 
 
-  public static Op FindOp(final ChannelBuffer cmd) {
+  public static Op findOp(final ChannelBuffer cmd) {
     cmd.readerIndex(0);
     return opsbf.get(cmd);
   }

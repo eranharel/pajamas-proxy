@@ -8,20 +8,6 @@ import java.util.Set;
  */
 public interface Cache {
   /**
-   * Enum defining response statuses from set/add type commands
-   */
-  public enum StoreResponse {
-    STORED, NOT_STORED, EXISTS, NOT_FOUND
-  }
-
-  /**
-   * Enum defining responses statuses from removal commands
-   */
-  public enum DeleteResponse {
-    DELETED, NOT_FOUND
-  }
-
-  /**
    * Handle the deletion of an item from the cache.
    *
    * @param key the key for the item

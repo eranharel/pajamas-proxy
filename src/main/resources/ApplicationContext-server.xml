@@ -5,6 +5,7 @@
 
   <bean id="daemon" class="com.thimbleware.jmemcached.MemCacheDaemon" destroy-method="stop">
     <constructor-arg ref="cacheProxy"/>
+    <constructor-arg ref="commandQueue"/>
     <constructor-arg ref="channelFactory"/>
     <constructor-arg ref="allChannels"/>
     <constructor-arg ref="serverBootstrap"/>
@@ -52,8 +53,11 @@
 
   <bean id="memcachedCommandHandler" class="com.thimbleware.jmemcached.protocol.MemcachedCommandHandler">
     <constructor-arg ref="cacheProxy" />
-    <constructor-arg value="1.0" /><!-- TODO pass this from maven? -->
+    <constructor-arg value="1.4.5" /><!-- TODO pass this from maven? -->
     <constructor-arg value="${pajamas.deamon.verbose}" />
     <constructor-arg ref="allChannels" />
-  </bean>
+    <constructor-arg ref="commandQueue"/>
+  </bean>    
+
+  <bean id="commandQueue" class="com.outbrain.pajamasproxy.memcached.command.CommandQueueImpl"/>
 </beans>

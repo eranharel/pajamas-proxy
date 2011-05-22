@@ -3,8 +3,9 @@ package com.thimbleware.jmemcached.protocol;
 import java.util.Map;
 import java.util.Set;
 
-import com.thimbleware.jmemcached.Cache;
 import com.thimbleware.jmemcached.CacheElement;
+import com.thimbleware.jmemcached.DeleteResponse;
+import com.thimbleware.jmemcached.StoreResponse;
 
 /**
  * Represents the response to a command.
@@ -17,10 +18,10 @@ public final class ResponseMessage {
 
   public CommandMessage cmd;
   public CacheElement[] elements;
-  public Cache.StoreResponse response;
+  public StoreResponse response;
   public Map<String, Set<String>> stats;
   public String version;
-  public Cache.DeleteResponse deleteResponse;
+  public DeleteResponse deleteResponse;
   public Integer incrDecrResponse;
   public boolean flushSuccess;
 
@@ -29,12 +30,12 @@ public final class ResponseMessage {
     return this;
   }
 
-  public ResponseMessage withResponse(final Cache.StoreResponse response) {
+  public ResponseMessage withResponse(final StoreResponse response) {
     this.response = response;
     return this;
   }
 
-  public ResponseMessage withDeleteResponse(final Cache.DeleteResponse deleteResponse) {
+  public ResponseMessage withDeleteResponse(final DeleteResponse deleteResponse) {
     this.deleteResponse = deleteResponse;
     return this;
   }

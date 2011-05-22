@@ -17,7 +17,9 @@ import org.springframework.util.Assert;
 
 import com.thimbleware.jmemcached.AbstractCache;
 import com.thimbleware.jmemcached.CacheElement;
+import com.thimbleware.jmemcached.DeleteResponse;
 import com.thimbleware.jmemcached.Key;
+import com.thimbleware.jmemcached.StoreResponse;
 
 public class SpyCacheProxy extends AbstractCache implements MemcachedProxyStatistics {
 
@@ -244,7 +246,7 @@ public class SpyCacheProxy extends AbstractCache implements MemcachedProxyStatis
     throw new RuntimeException(message);
   }
 
-  private com.thimbleware.jmemcached.Cache.StoreResponse storeResponse(final boolean succeeded) {
+  private com.thimbleware.jmemcached.StoreResponse storeResponse(final boolean succeeded) {
     return succeeded ? StoreResponse.STORED : StoreResponse.NOT_STORED;
   }
 }

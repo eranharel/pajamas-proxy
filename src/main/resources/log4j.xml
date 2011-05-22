@@ -13,7 +13,12 @@
   </logger>
 
   <logger name="com.outbrain.pajamasproxy" additivity="false">
-    <level value="debug" />
+    <level value="info" />
+    <appender-ref ref="stdout" />
+  </logger>
+
+  <logger name="com.outbrain.pajamasproxy.memcached.command.CommandQueueImpl" additivity="false">
+    <level value="info" />
     <appender-ref ref="stdout" />
   </logger>
 
