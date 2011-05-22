@@ -26,6 +26,9 @@ import org.jboss.netty.channel.socket.ServerSocketChannelFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.outbrain.pajamasproxy.memcached.command.CommandPoller;
+import com.outbrain.pajamasproxy.memcached.proxy.AsyncCache;
+
 /**
  * The actual daemon - responsible for the binding and configuration of the network configuration.
  */
@@ -36,7 +39,8 @@ public class MemCacheDaemon<CACHE_ELEMENT extends CacheElement> {
   public static String memcachedVersion = "0.9";
 
   private InetSocketAddress addr;
-  private final Cache cache;
+  private final AsyncCache cache;
+  private final Thread commandPoller;
 
   private boolean running = false;
   private final ServerSocketChannelFactory channelFactory;
@@ -44,8 +48,9 @@ public class MemCacheDaemon<CACHE_ELEMENT extends CacheElement> {
 
   private final ServerBootstrap serverBootstrap;
 
-  public MemCacheDaemon(final Cache cache, final ServerSocketChannelFactory channelFactory, final ChannelGroup allChannels, final ServerBootstrap serverBootstrap) {
+  public MemCacheDaemon(final AsyncCache cache, final CommandPoller commandPoller, final ServerSocketChannelFactory channelFactory, final ChannelGroup allChannels, final ServerBootstrap serverBootstrap) {
     this.cache = cache;
+    this.commandPoller = new Thread(commandPoller);
     this.channelFactory = channelFactory;
     this.allChannels = allChannels;
     this.serverBootstrap = serverBootstrap;
@@ -55,6 +60,8 @@ public class MemCacheDaemon<CACHE_ELEMENT extends CacheElement> {
    * Bind the network connection and start the network processing threads.
    */
   public void start() {
+
+    commandPoller.start();
 
     final Channel serverChannel = serverBootstrap.bind(addr);
     allChannels.add(serverChannel);
@@ -66,6 +73,8 @@ public class MemCacheDaemon<CACHE_ELEMENT extends CacheElement> {
 
   public void stop() {
     log.info("terminating daemon; closing all channels");
+
+    commandPoller.interrupt();
 
     final ChannelGroupFuture future = allChannels.close();
     future.awaitUninterruptibly();

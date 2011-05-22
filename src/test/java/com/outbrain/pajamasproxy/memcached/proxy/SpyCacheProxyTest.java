@@ -28,11 +28,11 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.thimbleware.jmemcached.Cache.DeleteResponse;
-import com.thimbleware.jmemcached.Cache.StoreResponse;
 import com.thimbleware.jmemcached.CacheElement;
+import com.thimbleware.jmemcached.DeleteResponse;
 import com.thimbleware.jmemcached.Key;
 import com.thimbleware.jmemcached.LocalCacheElement;
+import com.thimbleware.jmemcached.StoreResponse;
 
 public class SpyCacheProxyTest {
 

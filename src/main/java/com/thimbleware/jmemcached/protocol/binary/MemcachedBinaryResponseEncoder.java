@@ -234,8 +234,12 @@ public class MemcachedBinaryResponseEncoder extends SimpleChannelUpstreamHandler
   }
 
   private ChannelBuffer cork(final int opaque, final int totalCapacity) {
-    if (corkedBuffers.containsKey(opaque)) {
-      ChannelBuffer corkedResponse = corkedBuffers.get(opaque);
+    ChannelBuffer corkedResponse = corkedBuffers.get(opaque);
+    if (corkedResponse == null) {
+      final ChannelBuffer buffer = ChannelBuffers.buffer(ByteOrder.BIG_ENDIAN, totalCapacity);
+      corkedBuffers.put(opaque, buffer);
+      return buffer;
+    } else {
       final ChannelBuffer oldBuffer = corkedResponse;
       corkedResponse = ChannelBuffers.buffer(ByteOrder.BIG_ENDIAN, totalCapacity + corkedResponse.capacity());
       corkedResponse.writeBytes(oldBuffer);
@@ -244,10 +248,6 @@ public class MemcachedBinaryResponseEncoder extends SimpleChannelUpstreamHandler
       corkedBuffers.remove(opaque);
       corkedBuffers.put(opaque, corkedResponse);
       return corkedResponse;
-    } else {
-      final ChannelBuffer buffer = ChannelBuffers.buffer(ByteOrder.BIG_ENDIAN, totalCapacity);
-      corkedBuffers.put(opaque, buffer);
-      return buffer;
     }
   }
 
