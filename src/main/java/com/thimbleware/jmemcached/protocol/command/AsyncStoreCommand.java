@@ -1,11 +1,11 @@
-package com.outbrain.pajamasproxy.memcached.command;
+package com.thimbleware.jmemcached.protocol.command;
 
 import java.util.concurrent.Future;
 
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelHandlerContext;
 
-import com.thimbleware.jmemcached.StoreResponse;
+import com.outbrain.pajamasproxy.memcached.proxy.value.StoreResponse;
 import com.thimbleware.jmemcached.protocol.value.CommandMessage;
 
 public class AsyncStoreCommand extends AbstractAsyncCommand<StoreResponse> {

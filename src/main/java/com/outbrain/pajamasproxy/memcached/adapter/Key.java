@@ -1,4 +1,4 @@
-package com.thimbleware.jmemcached;
+package com.outbrain.pajamasproxy.memcached.adapter;
 
 import org.jboss.netty.buffer.ChannelBuffer;
 

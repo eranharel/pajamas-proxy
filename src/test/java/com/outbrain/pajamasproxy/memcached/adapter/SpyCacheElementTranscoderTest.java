@@ -6,8 +6,6 @@ import org.jboss.netty.buffer.ChannelBuffers;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.thimbleware.jmemcached.CacheElement;
-import com.thimbleware.jmemcached.LocalCacheElement;
 
 /**
  * Test cases for the {@link SpyCacheElementTranscoder}

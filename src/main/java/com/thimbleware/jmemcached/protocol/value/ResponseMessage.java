@@ -3,9 +3,9 @@ package com.thimbleware.jmemcached.protocol.value;
 import java.util.Map;
 import java.util.Set;
 
-import com.thimbleware.jmemcached.CacheElement;
-import com.thimbleware.jmemcached.DeleteResponse;
-import com.thimbleware.jmemcached.StoreResponse;
+import com.outbrain.pajamasproxy.memcached.adapter.CacheElement;
+import com.outbrain.pajamasproxy.memcached.proxy.value.DeleteResponse;
+import com.outbrain.pajamasproxy.memcached.proxy.value.StoreResponse;
 
 /**
  * Represents the response to a command.
