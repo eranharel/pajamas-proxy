@@ -2,7 +2,7 @@ package com.outbrain.pajamasproxy.memcached;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.thimbleware.jmemcached.MemCacheDaemon;
+import com.outbrain.pajamasproxy.memcached.server.MemCacheDaemon;
 
 public class PajamasProxyDaemon {
 
