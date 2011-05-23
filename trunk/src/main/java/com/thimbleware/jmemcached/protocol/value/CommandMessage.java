@@ -20,8 +20,8 @@ import java.util.List;
 
 import org.jboss.netty.buffer.ChannelBuffer;
 
-import com.thimbleware.jmemcached.CacheElement;
-import com.thimbleware.jmemcached.Key;
+import com.outbrain.pajamasproxy.memcached.adapter.CacheElement;
+import com.outbrain.pajamasproxy.memcached.adapter.Key;
 
 /**
  * The payload object holding the parsed message.

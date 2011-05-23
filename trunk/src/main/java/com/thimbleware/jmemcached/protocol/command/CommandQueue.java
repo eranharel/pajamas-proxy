@@ -1,4 +1,4 @@
-package com.outbrain.pajamasproxy.memcached.command;
+package com.thimbleware.jmemcached.protocol.command;
 
 
 public interface CommandQueue {

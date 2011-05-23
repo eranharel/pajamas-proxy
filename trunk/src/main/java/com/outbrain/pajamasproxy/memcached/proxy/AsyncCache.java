@@ -6,10 +6,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Future;
 
-import com.thimbleware.jmemcached.CacheElement;
-import com.thimbleware.jmemcached.DeleteResponse;
-import com.thimbleware.jmemcached.Key;
-import com.thimbleware.jmemcached.StoreResponse;
+import com.outbrain.pajamasproxy.memcached.adapter.CacheElement;
+import com.outbrain.pajamasproxy.memcached.adapter.Key;
+import com.outbrain.pajamasproxy.memcached.proxy.value.DeleteResponse;
+import com.outbrain.pajamasproxy.memcached.proxy.value.StoreResponse;
 
 /**
  * An API for an asynchronous cache.

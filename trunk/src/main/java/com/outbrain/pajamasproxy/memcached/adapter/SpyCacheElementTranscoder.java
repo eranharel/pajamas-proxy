@@ -6,8 +6,6 @@ import net.spy.memcached.transcoders.Transcoder;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
 
-import com.thimbleware.jmemcached.CacheElement;
-import com.thimbleware.jmemcached.LocalCacheElement;
 
 /**
  * An adapter between the Jmemcached server and Spymemcached client APIs.

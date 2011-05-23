@@ -2,7 +2,7 @@ package com.outbrain.pajamasproxy.memcached.proxy.future;
 
 import java.util.concurrent.Future;
 
-import com.thimbleware.jmemcached.StoreResponse;
+import com.outbrain.pajamasproxy.memcached.proxy.value.StoreResponse;
 
 public class StoreFuture extends AbstractSpyFutureWrapper<Boolean, StoreResponse> {
 

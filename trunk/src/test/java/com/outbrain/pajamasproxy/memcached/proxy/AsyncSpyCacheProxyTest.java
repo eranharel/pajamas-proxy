@@ -30,11 +30,11 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.thimbleware.jmemcached.CacheElement;
-import com.thimbleware.jmemcached.DeleteResponse;
-import com.thimbleware.jmemcached.Key;
-import com.thimbleware.jmemcached.LocalCacheElement;
-import com.thimbleware.jmemcached.StoreResponse;
+import com.outbrain.pajamasproxy.memcached.adapter.CacheElement;
+import com.outbrain.pajamasproxy.memcached.adapter.Key;
+import com.outbrain.pajamasproxy.memcached.adapter.LocalCacheElement;
+import com.outbrain.pajamasproxy.memcached.proxy.value.DeleteResponse;
+import com.outbrain.pajamasproxy.memcached.proxy.value.StoreResponse;
 
 /**
  * Test cases for the {@link AsyncSpyCacheProxy} implementation.

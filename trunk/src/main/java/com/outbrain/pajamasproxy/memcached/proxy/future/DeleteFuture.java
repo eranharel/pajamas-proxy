@@ -2,7 +2,7 @@ package com.outbrain.pajamasproxy.memcached.proxy.future;
 
 import java.util.concurrent.Future;
 
-import com.thimbleware.jmemcached.DeleteResponse;
+import com.outbrain.pajamasproxy.memcached.proxy.value.DeleteResponse;
 
 public class DeleteFuture extends AbstractSpyFutureWrapper<Boolean, DeleteResponse> {
 

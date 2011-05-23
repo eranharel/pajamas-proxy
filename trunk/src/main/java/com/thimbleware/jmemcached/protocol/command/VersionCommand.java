@@ -1,4 +1,4 @@
-package com.outbrain.pajamasproxy.memcached.command;
+package com.thimbleware.jmemcached.protocol.command;
 
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelHandlerContext;

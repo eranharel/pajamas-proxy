@@ -4,7 +4,7 @@ import java.util.concurrent.Future;
 
 import net.spy.memcached.CASResponse;
 
-import com.thimbleware.jmemcached.StoreResponse;
+import com.outbrain.pajamasproxy.memcached.proxy.value.StoreResponse;
 
 public class CasFuture extends AbstractSpyFutureWrapper<CASResponse, StoreResponse> {
 

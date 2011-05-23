@@ -1,4 +1,4 @@
-package com.thimbleware.jmemcached;
+package com.outbrain.pajamasproxy.memcached.proxy.value;
 
 /**
  * Enum defining responses statuses from removal commands
