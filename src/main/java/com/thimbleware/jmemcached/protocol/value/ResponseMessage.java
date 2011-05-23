@@ -1,4 +1,4 @@
-package com.thimbleware.jmemcached.protocol;
+package com.thimbleware.jmemcached.protocol.value;
 
 import java.util.Map;
 import java.util.Set;

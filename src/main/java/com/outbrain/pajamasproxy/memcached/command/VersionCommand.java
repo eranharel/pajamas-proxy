@@ -3,7 +3,7 @@ package com.outbrain.pajamasproxy.memcached.command;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelHandlerContext;
 
-import com.thimbleware.jmemcached.protocol.CommandMessage;
+import com.thimbleware.jmemcached.protocol.value.CommandMessage;
 
 public class VersionCommand extends SimpleCommand {
 
