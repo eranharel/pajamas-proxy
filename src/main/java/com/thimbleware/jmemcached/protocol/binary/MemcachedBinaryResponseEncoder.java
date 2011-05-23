@@ -17,9 +17,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.thimbleware.jmemcached.CacheElement;
-import com.thimbleware.jmemcached.protocol.Op;
-import com.thimbleware.jmemcached.protocol.ResponseMessage;
 import com.thimbleware.jmemcached.protocol.exceptions.UnknownCommandException;
+import com.thimbleware.jmemcached.protocol.value.Op;
+import com.thimbleware.jmemcached.protocol.value.ResponseMessage;
 
 /**
  *

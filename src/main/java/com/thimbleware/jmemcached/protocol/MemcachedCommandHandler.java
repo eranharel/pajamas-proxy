@@ -43,6 +43,8 @@ import com.thimbleware.jmemcached.CacheElement;
 import com.thimbleware.jmemcached.DeleteResponse;
 import com.thimbleware.jmemcached.StoreResponse;
 import com.thimbleware.jmemcached.protocol.exceptions.UnknownCommandException;
+import com.thimbleware.jmemcached.protocol.value.CommandMessage;
+import com.thimbleware.jmemcached.protocol.value.Op;
 
 // TODO implement flush_all delay
 

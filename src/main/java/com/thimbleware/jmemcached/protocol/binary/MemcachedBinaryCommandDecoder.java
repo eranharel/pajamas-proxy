@@ -14,9 +14,9 @@ import org.jboss.netty.handler.codec.frame.FrameDecoder;
 import com.thimbleware.jmemcached.CacheElement;
 import com.thimbleware.jmemcached.Key;
 import com.thimbleware.jmemcached.LocalCacheElement;
-import com.thimbleware.jmemcached.protocol.CommandMessage;
-import com.thimbleware.jmemcached.protocol.Op;
 import com.thimbleware.jmemcached.protocol.exceptions.MalformedCommandException;
+import com.thimbleware.jmemcached.protocol.value.CommandMessage;
+import com.thimbleware.jmemcached.protocol.value.Op;
 
 /**
  */

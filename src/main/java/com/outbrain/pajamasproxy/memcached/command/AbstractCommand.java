@@ -5,8 +5,8 @@ import org.jboss.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.thimbleware.jmemcached.protocol.CommandMessage;
-import com.thimbleware.jmemcached.protocol.ResponseMessage;
+import com.thimbleware.jmemcached.protocol.value.CommandMessage;
+import com.thimbleware.jmemcached.protocol.value.ResponseMessage;
 
 public abstract class AbstractCommand implements Command {
 
