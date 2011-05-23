@@ -45,6 +45,7 @@ class AsyncSpyCacheProxy implements AsyncCache, MemcachedProxyStatistics {
 
   private static final Charset DEFAULT_CHARSET = Charset.forName("utf-8");
 
+  // TODO these members are not being updated ATM...
   private final AtomicInteger errors = new AtomicInteger();
   private final AtomicInteger timeouts = new AtomicInteger();
 
@@ -82,6 +83,7 @@ class AsyncSpyCacheProxy implements AsyncCache, MemcachedProxyStatistics {
 
   @Override
   public Future<StoreResponse> set(final CacheElement element) {
+    setCmds.incrementAndGet();
     return new StoreFuture(memcachedClient.set(toStringKey(element.getKey()), element.getExpire(), element));
   }
 
@@ -107,8 +109,7 @@ class AsyncSpyCacheProxy implements AsyncCache, MemcachedProxyStatistics {
     final List<String> stringKeys = extractStringKeys(keys);
     log.debug("get({})", stringKeys);
 
-    // TODO we should update the stats somehow...
-    return new GetFuture(memcachedClient.asyncGetBulk(stringKeys), stringKeys);
+    return new GetFuture(memcachedClient.asyncGetBulk(stringKeys), stringKeys, getHits, getMisses);
   }
 
   private List<String> extractStringKeys(final Collection<Key> keys) {
