@@ -17,7 +17,7 @@
     <appender-ref ref="stdout" />
   </logger>
 
-  <logger name="com.outbrain.pajamasproxy.memcached.command.CommandQueueImpl" additivity="false">
+  <logger name="com.thimbleware.jmemcached.protocol.command.CommandQueueImpl" additivity="false">
     <level value="info" />
     <appender-ref ref="stdout" />
   </logger>
