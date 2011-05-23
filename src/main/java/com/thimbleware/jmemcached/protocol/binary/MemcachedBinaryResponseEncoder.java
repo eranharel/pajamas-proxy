@@ -16,7 +16,7 @@ import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.thimbleware.jmemcached.CacheElement;
+import com.outbrain.pajamasproxy.memcached.adapter.CacheElement;
 import com.thimbleware.jmemcached.protocol.exceptions.UnknownCommandException;
 import com.thimbleware.jmemcached.protocol.value.Op;
 import com.thimbleware.jmemcached.protocol.value.ResponseMessage;

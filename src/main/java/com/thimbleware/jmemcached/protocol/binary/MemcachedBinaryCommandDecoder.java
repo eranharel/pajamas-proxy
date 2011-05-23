@@ -11,9 +11,9 @@ import org.jboss.netty.channel.ChannelHandler;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.handler.codec.frame.FrameDecoder;
 
-import com.thimbleware.jmemcached.CacheElement;
-import com.thimbleware.jmemcached.Key;
-import com.thimbleware.jmemcached.LocalCacheElement;
+import com.outbrain.pajamasproxy.memcached.adapter.CacheElement;
+import com.outbrain.pajamasproxy.memcached.adapter.Key;
+import com.outbrain.pajamasproxy.memcached.adapter.LocalCacheElement;
 import com.thimbleware.jmemcached.protocol.exceptions.MalformedCommandException;
 import com.thimbleware.jmemcached.protocol.value.CommandMessage;
 import com.thimbleware.jmemcached.protocol.value.Op;

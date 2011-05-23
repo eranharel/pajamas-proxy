@@ -21,19 +21,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
+import com.outbrain.pajamasproxy.memcached.adapter.CacheElement;
+import com.outbrain.pajamasproxy.memcached.adapter.Key;
 import com.outbrain.pajamasproxy.memcached.proxy.future.CasFuture;
 import com.outbrain.pajamasproxy.memcached.proxy.future.DeleteFuture;
 import com.outbrain.pajamasproxy.memcached.proxy.future.GetFuture;
 import com.outbrain.pajamasproxy.memcached.proxy.future.StoreFuture;
-import com.thimbleware.jmemcached.CacheElement;
-import com.thimbleware.jmemcached.DeleteResponse;
-import com.thimbleware.jmemcached.Key;
-import com.thimbleware.jmemcached.MemCacheDaemon;
-import com.thimbleware.jmemcached.StoreResponse;
+import com.outbrain.pajamasproxy.memcached.proxy.value.DeleteResponse;
+import com.outbrain.pajamasproxy.memcached.proxy.value.StoreResponse;
 
 class AsyncSpyCacheProxy implements AsyncCache, MemcachedProxyStatistics {
 
   private static final Logger log = LoggerFactory.getLogger(AsyncSpyCacheProxy.class);
+
+  public static final String memcachedVersion = "0.9";
 
   private final AtomicLong started = new AtomicLong();
 
@@ -141,7 +142,7 @@ class AsyncSpyCacheProxy implements AsyncCache, MemcachedProxyStatistics {
     final Map<String, Set<String>> result = new HashMap<String, Set<String>>();
 
     // stats we know
-    multiSet(result, "version", MemCacheDaemon.memcachedVersion);
+    multiSet(result, "version", memcachedVersion);
     multiSet(result, "cmd_gets", valueOf(getGetCommands()));
     multiSet(result, "cmd_sets", valueOf(getSetCommands()));
     multiSet(result, "get_hits", valueOf(getGetHits()));

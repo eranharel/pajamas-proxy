@@ -26,8 +26,9 @@ import org.jboss.netty.channel.socket.ServerSocketChannelFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.outbrain.pajamasproxy.memcached.command.CommandPoller;
+import com.outbrain.pajamasproxy.memcached.adapter.CacheElement;
 import com.outbrain.pajamasproxy.memcached.proxy.AsyncCache;
+import com.thimbleware.jmemcached.protocol.command.CommandPoller;
 
 /**
  * The actual daemon - responsible for the binding and configuration of the network configuration.
@@ -35,8 +36,6 @@ import com.outbrain.pajamasproxy.memcached.proxy.AsyncCache;
 public class MemCacheDaemon<CACHE_ELEMENT extends CacheElement> {
 
   final Logger log = LoggerFactory.getLogger(MemCacheDaemon.class);
-
-  public static String memcachedVersion = "0.9";
 
   private InetSocketAddress addr;
   private final AsyncCache cache;

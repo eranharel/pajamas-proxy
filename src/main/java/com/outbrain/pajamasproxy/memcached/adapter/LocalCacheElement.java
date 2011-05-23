@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.thimbleware.jmemcached;
+package com.outbrain.pajamasproxy.memcached.adapter;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -22,8 +22,6 @@ import java.io.ObjectOutput;
 
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
-
-import com.thimbleware.jmemcached.util.BufferUtils;
 
 
 /**
@@ -59,51 +57,6 @@ public final class LocalCacheElement implements CacheElement, Externalizable {
     return getData().capacity();
   }
 
-  @Override
-  public LocalCacheElement append(final CacheElement appendElement) {
-    final int newLength = size() + appendElement.size();
-    final LocalCacheElement appendedElement = new LocalCacheElement(getKey(), getFlags(), getExpire(), 0L);
-    final ChannelBuffer appended = ChannelBuffers.buffer(newLength);
-    final ChannelBuffer existing = getData();
-    final ChannelBuffer append = appendElement.getData();
-
-    appended.writeBytes(existing);
-    appended.writeBytes(append);
-
-    appended.readerIndex(0);
-
-    existing.readerIndex(0);
-    append.readerIndex(0);
-
-    appendedElement.setData(appended);
-    appendedElement.setCasUnique(appendedElement.getCasUnique() + 1);
-
-    return appendedElement;
-  }
-
-  @Override
-  public LocalCacheElement prepend(final CacheElement prependElement) {
-    final int newLength = size() + prependElement.size();
-
-    final LocalCacheElement prependedElement = new LocalCacheElement(getKey(), getFlags(), getExpire(), 0L);
-    final ChannelBuffer prepended = ChannelBuffers.buffer(newLength);
-    final ChannelBuffer prepend = prependElement.getData();
-    final ChannelBuffer existing = getData();
-
-    prepended.writeBytes(prepend);
-    prepended.writeBytes(existing);
-
-    existing.readerIndex(0);
-    prepend.readerIndex(0);
-
-    prepended.readerIndex(0);
-
-    prependedElement.setData(prepended);
-    prependedElement.setCasUnique(prependedElement.getCasUnique() + 1);
-
-    return prependedElement;
-  }
-
   public static class IncrDecrResult {
     int oldValue;
     LocalCacheElement replace;
@@ -112,24 +65,6 @@ public final class LocalCacheElement implements CacheElement, Externalizable {
       this.oldValue = oldValue;
       this.replace = replace;
     }
-  }
-
-  @Override
-  public IncrDecrResult add(final int mod) {
-    // TODO handle parse failure!
-    int modVal = BufferUtils.atoi(getData()) + mod; // change value
-    if (modVal < 0) {
-      modVal = 0;
-
-    } // check for underflow
-
-    final ChannelBuffer newData = BufferUtils.itoa(modVal);
-
-    final LocalCacheElement replace = new LocalCacheElement(getKey(), getFlags(), getExpire(), 0L);
-    replace.setData(newData);
-    replace.setCasUnique(replace.getCasUnique() + 1);
-
-    return new IncrDecrResult(modVal, replace);
   }
 
   @Override

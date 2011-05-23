@@ -1,4 +1,4 @@
-package com.thimbleware.jmemcached;
+package com.outbrain.pajamasproxy.memcached.adapter;
 
 import java.io.Serializable;
 
@@ -27,10 +27,4 @@ public interface CacheElement extends Serializable {
   long getCasUnique();
 
   void setCasUnique(long casUnique);
-
-  CacheElement append(CacheElement element);
-
-  CacheElement prepend(CacheElement element);
-
-  LocalCacheElement.IncrDecrResult add(int mod);
 }

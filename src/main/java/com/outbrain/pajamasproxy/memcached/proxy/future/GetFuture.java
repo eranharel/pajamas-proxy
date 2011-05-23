@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.util.Assert;
 
-import com.thimbleware.jmemcached.CacheElement;
+import com.outbrain.pajamasproxy.memcached.adapter.CacheElement;
 
 public class GetFuture extends AbstractSpyFutureWrapper<Map<String, Object>, CacheElement[]> {
 
