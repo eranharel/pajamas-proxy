@@ -6,7 +6,7 @@ import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.Channels;
 
-import com.thimbleware.jmemcached.protocol.CommandMessage;
+import com.thimbleware.jmemcached.protocol.value.CommandMessage;
 
 public abstract class AbstractAsyncCommand<V> extends AbstractCommand {
 
