@@ -1,8 +1,9 @@
 package com.outbrain.pajamasproxy.memcached.monitor;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import org.springframework.util.Assert;
 
 import com.outbrain.pajamasproxy.memcached.proxy.MemcachedProxyStatistics;
+import com.outbrain.pajamasproxy.memcached.server.protocol.ServerConnectionStatistics;
 
 /**
  * The implementation of the {@link StatisticsMBean} interface.
@@ -12,23 +13,23 @@ import com.outbrain.pajamasproxy.memcached.proxy.MemcachedProxyStatistics;
 class Statistics implements StatisticsMBean {
 
   private final MemcachedProxyStatistics proxyStatistics;
+  private final ServerConnectionStatistics connectionStatistics;
 
-  // TODO these should be somehow fetched from JMemcached MemcachedCommandHandler
-  private final AtomicInteger currConnectionCount = new AtomicInteger();
-  private final AtomicInteger totalConnectionCount = new AtomicInteger();
-
-  public Statistics(final MemcachedProxyStatistics proxyStatistics) {
+  public Statistics(final MemcachedProxyStatistics proxyStatistics, final ServerConnectionStatistics connectionStatistics) {
+    Assert.notNull(proxyStatistics, "proxyStatistics may not be null");
+    Assert.notNull(connectionStatistics, "connectionStatistics may not be null");
     this.proxyStatistics = proxyStatistics;
+    this.connectionStatistics = connectionStatistics;
   }
 
   @Override
   public int getCurrentConnectionCount() {
-    return currConnectionCount.get();
+    return connectionStatistics.getCurrentConnectionCount();
   }
 
   @Override
   public int getTotalConnectionCount() {
-    return totalConnectionCount.get();
+    return connectionStatistics.getTotalConnectionCount();
   }
 
   @Override
