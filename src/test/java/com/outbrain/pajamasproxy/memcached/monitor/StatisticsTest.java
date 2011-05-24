@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.outbrain.pajamasproxy.memcached.proxy.MemcachedProxyStatistics;
+import com.outbrain.pajamasproxy.memcached.server.protocol.ServerConnectionStatistics;
 
 /**
  * Test cases for the {@link StatisticsMBean} implementation.
@@ -21,6 +22,9 @@ public class StatisticsTest {
   @Mock
   private MemcachedProxyStatistics proxyMock;
 
+  @Mock
+  private ServerConnectionStatistics connectionStatisticsMock;
+
   @Before
   public void setup() {
     MockitoAnnotations.initMocks(this);
@@ -29,18 +33,28 @@ public class StatisticsTest {
   @After
   public void teardown() {
     this.proxyMock = null;
+    this.connectionStatisticsMock = null;
   }
 
-  // TODO implement connection stats tests when stats available...
-  //  @Test
-  //  public void testGetCurrentConnectionCount() {
-  //    fail("Not yet implemented");
-  //  }
-  //
-  //  @Test
-  //  public void testGetTotalConnectionCount() {
-  //    fail("Not yet implemented");
-  //  }
+  @Test
+  public void testGetCurrentConnectionCount() {
+    final int expectedCount = 666;
+
+    when(connectionStatisticsMock.getCurrentConnectionCount()).thenReturn(expectedCount);
+    final int actualCount = createStatisticsMBean().getCurrentConnectionCount();
+
+    assertEquals("getCurrentConnectionCount", expectedCount, actualCount);
+  }
+
+  @Test
+  public void testGetTotalConnectionCount() {
+    final int expectedCount = 999;
+
+    when(connectionStatisticsMock.getTotalConnectionCount()).thenReturn(expectedCount);
+    final int actualCount = createStatisticsMBean().getTotalConnectionCount();
+
+    assertEquals("getTotalConnectionCount", expectedCount, actualCount);
+  }
 
   @Test
   public void testGetGetCommands_afterInit() {
@@ -127,6 +141,6 @@ public class StatisticsTest {
   }
 
   private StatisticsMBean createStatisticsMBean() {
-    return new Statistics(proxyMock);
+    return new Statistics(proxyMock, connectionStatisticsMock);
   }
 }

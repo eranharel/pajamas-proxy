@@ -58,12 +58,12 @@ import com.outbrain.pajamasproxy.memcached.server.protocol.value.Op;
  * The command handler produces ResponseMessages which are destined for the response encoder.
  */
 @ChannelHandler.Sharable
-public final class MemcachedCommandHandler extends SimpleChannelUpstreamHandler {
+public final class MemcachedCommandHandler extends SimpleChannelUpstreamHandler implements ServerConnectionStatistics {
 
   final Logger logger = LoggerFactory.getLogger(MemcachedCommandHandler.class);
 
-  public final AtomicInteger curr_conns = new AtomicInteger();
-  public final AtomicInteger total_conns = new AtomicInteger();
+  private final AtomicInteger currentConnectionCount = new AtomicInteger();
+  private final AtomicInteger totalConnectionCount = new AtomicInteger();
 
   /**
    * The following state variables are universal for the entire daemon. These are used for statistics gathering.
@@ -113,8 +113,8 @@ public final class MemcachedCommandHandler extends SimpleChannelUpstreamHandler 
    */
   @Override
   public void channelOpen(final ChannelHandlerContext channelHandlerContext, final ChannelStateEvent channelStateEvent) throws Exception {
-    total_conns.incrementAndGet();
-    curr_conns.incrementAndGet();
+    totalConnectionCount.incrementAndGet();
+    currentConnectionCount.incrementAndGet();
     channelGroup.add(channelHandlerContext.getChannel());
   }
 
@@ -127,7 +127,7 @@ public final class MemcachedCommandHandler extends SimpleChannelUpstreamHandler 
    */
   @Override
   public void channelClosed(final ChannelHandlerContext channelHandlerContext, final ChannelStateEvent channelStateEvent) throws Exception {
-    curr_conns.decrementAndGet();
+    currentConnectionCount.decrementAndGet();
     channelGroup.remove(channelHandlerContext.getChannel());
   }
 
@@ -307,4 +307,13 @@ public final class MemcachedCommandHandler extends SimpleChannelUpstreamHandler 
     commandQueue.enqueueFutureResponse(new AsyncGetCommand(channelHandlerContext, command, channel, futureResponse));
   }
 
+  @Override
+  public int getCurrentConnectionCount() {
+    return currentConnectionCount.get();
+  }
+
+  @Override
+  public int getTotalConnectionCount() {
+    return totalConnectionCount.get();
+  }
 }
