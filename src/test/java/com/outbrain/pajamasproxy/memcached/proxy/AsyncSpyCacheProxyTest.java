@@ -22,6 +22,7 @@ import junit.framework.Assert;
 import net.spy.memcached.CASResponse;
 import net.spy.memcached.MemcachedClientIF;
 import net.spy.memcached.internal.BulkFuture;
+import net.spy.memcached.ops.OperationStatus;
 
 import org.jboss.netty.buffer.ChannelBuffers;
 import org.junit.After;
@@ -390,6 +391,12 @@ public class AsyncSpyCacheProxyTest {
     @Override
     public V getSome(final long timeout, final TimeUnit unit) throws InterruptedException, ExecutionException {
       return null;
+    }
+    
+    @Override
+    public OperationStatus getStatus() {
+    	// TODO Auto-generated method stub
+    	return null;
     }
   }
 }
