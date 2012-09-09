@@ -52,7 +52,7 @@ public class MemcachedBinaryResponseEncoder extends SimpleChannelUpstreamHandler
   public ResponseCode getStatusCode(final ResponseMessage command) {
     final Op cmd = command.cmd.op;
     if (cmd == Op.GET || cmd == Op.GETS) {
-      return ResponseCode.OK;
+      return command.elements[0] == null ? ResponseCode.KEYNF : ResponseCode.OK;
     } else if (cmd == Op.SET || cmd == Op.CAS || cmd == Op.ADD || cmd == Op.REPLACE || cmd == Op.APPEND  || cmd == Op.PREPEND) {
       switch (command.response) {
       case EXISTS:
@@ -158,6 +158,7 @@ public class MemcachedBinaryResponseEncoder extends SimpleChannelUpstreamHandler
           valueBuffer = ChannelBuffers.wrappedBuffer(element.getData());
         } else {
           valueBuffer = ChannelBuffers.buffer(0);
+          extrasBuffer = null;
         }
       } else if (command.cmd.op == Op.INCR || command.cmd.op == Op.DECR) {
         valueBuffer = ChannelBuffers.buffer(ByteOrder.BIG_ENDIAN, 8);
