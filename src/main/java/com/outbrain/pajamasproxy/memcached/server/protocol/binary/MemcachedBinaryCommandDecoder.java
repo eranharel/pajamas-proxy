@@ -11,7 +11,6 @@ import org.jboss.netty.channel.ChannelHandler;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.handler.codec.frame.FrameDecoder;
 
-import com.outbrain.pajamasproxy.memcached.adapter.CacheElement;
 import com.outbrain.pajamasproxy.memcached.adapter.Key;
 import com.outbrain.pajamasproxy.memcached.adapter.LocalCacheElement;
 import com.outbrain.pajamasproxy.memcached.server.protocol.exceptions.MalformedCommandException;
@@ -155,13 +154,13 @@ public class MemcachedBinaryCommandDecoder extends FrameDecoder {
           cmdType == Op.PREPEND)
       {
         // TODO these are backwards from the spec, but seem to be what spymemcached demands -- which has the mistake?!
-        final short expire = (short) (extrasBuffer.capacity() != 0 ? extrasBuffer.readUnsignedShort() : 0);
-        final short flags = (short) (extrasBuffer.capacity() != 0 ? extrasBuffer.readUnsignedShort() : 0);
-
+        final int flags = (int) (extrasBuffer.capacity() != 0 ? extrasBuffer.readUnsignedInt() : 0);
+        final int expire = (int) (extrasBuffer.capacity() != 0 ? extrasBuffer.readUnsignedInt() : 0);
+        
         // the remainder of the message -- that is, totalLength - (keyLength + extraLength) should be the payload
         final int size = totalBodyLength - keyLength - extraLength;
 
-        cmdMessage.element = new LocalCacheElement(new Key(keyBuffer.slice()), flags, expire != 0 && expire < CacheElement.THIRTY_DAYS ? LocalCacheElement.Now() + expire : expire, 0L);
+        cmdMessage.element = new LocalCacheElement(new Key(keyBuffer.slice()), flags, expire, 0L);
         final ChannelBuffer data = ChannelBuffers.buffer(size);
         channelBuffer.readBytes(data);
         cmdMessage.element.setData(data);
