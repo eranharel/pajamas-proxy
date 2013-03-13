@@ -3,13 +3,17 @@ package com.outbrain.pajamasproxy.memcached.server.protocol.binary;
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelHandler;
 import org.jboss.netty.channel.ChannelHandlerContext;
+import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.handler.codec.frame.FrameDecoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.outbrain.pajamasproxy.memcached.adapter.Key;
 import com.outbrain.pajamasproxy.memcached.adapter.LocalCacheElement;
@@ -20,9 +24,13 @@ import com.outbrain.pajamasproxy.memcached.server.protocol.value.Op;
 /**
  */
 @ChannelHandler.Sharable
-public class MemcachedBinaryCommandDecoder extends FrameDecoder {
+public class MemcachedBinaryCommandDecoder extends FrameDecoder implements DecodingStatistics {
+
+  private final Logger logger = LoggerFactory.getLogger(MemcachedBinaryCommandDecoder.class);
 
   public static final Charset USASCII = Charset.forName("US-ASCII");
+
+  private static final AtomicLong decodingErrors = new AtomicLong();
 
   public static enum BinaryOp {
     Get(0x00, Op.GET, false),
@@ -156,7 +164,7 @@ public class MemcachedBinaryCommandDecoder extends FrameDecoder {
         // TODO these are backwards from the spec, but seem to be what spymemcached demands -- which has the mistake?!
         final int flags = (int) (extrasBuffer.capacity() != 0 ? extrasBuffer.readUnsignedInt() : 0);
         final int expire = (int) (extrasBuffer.capacity() != 0 ? extrasBuffer.readUnsignedInt() : 0);
-        
+
         // the remainder of the message -- that is, totalLength - (keyLength + extraLength) should be the payload
         final int size = totalBodyLength - keyLength - extraLength;
 
@@ -175,5 +183,20 @@ public class MemcachedBinaryCommandDecoder extends FrameDecoder {
     }
 
     return cmdMessage;
+  }
+
+  @Override
+  public void exceptionCaught(final ChannelHandlerContext ctx, final ExceptionEvent e) throws Exception {
+    decodingErrors.incrementAndGet();
+    logger.warn(e.getCause() + " remoteAddress=" + ctx.getChannel().getRemoteAddress() + " closing channel...");
+    ctx.getChannel().close();
+  }
+
+  /* (non-Javadoc)
+   * @see com.outbrain.pajamasproxy.memcached.server.protocol.binary.DecodingStatistics#getDecodingErrors()
+   */
+  @Override
+  public long getDecodingErrors() {
+    return decodingErrors.get();
   }
 }

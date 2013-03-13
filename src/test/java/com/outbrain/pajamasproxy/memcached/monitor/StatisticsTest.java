@@ -11,6 +11,7 @@ import org.mockito.MockitoAnnotations;
 
 import com.outbrain.pajamasproxy.memcached.proxy.MemcachedProxyStatistics;
 import com.outbrain.pajamasproxy.memcached.server.protocol.ServerConnectionStatistics;
+import com.outbrain.pajamasproxy.memcached.server.protocol.binary.DecodingStatistics;
 
 /**
  * Test cases for the {@link StatisticsMBean} implementation.
@@ -25,6 +26,9 @@ public class StatisticsTest {
   @Mock
   private ServerConnectionStatistics connectionStatisticsMock;
 
+  @Mock
+  private DecodingStatistics decodingStatisticsMock;
+
   @Before
   public void setup() {
     MockitoAnnotations.initMocks(this);
@@ -34,6 +38,7 @@ public class StatisticsTest {
   public void teardown() {
     this.proxyMock = null;
     this.connectionStatisticsMock = null;
+    this.decodingStatisticsMock = null;
   }
 
   @Test
@@ -140,7 +145,16 @@ public class StatisticsTest {
     assertEquals("timeout count", expectedCommandCount, actualCommandCount);
   }
 
+  @Test
+  public void testDecodingErrors() {
+    final long expectedCommandCount = 987;
+
+    when(decodingStatisticsMock.getDecodingErrors()).thenReturn(expectedCommandCount);
+    final long actualCommandCount = createStatisticsMBean().getDecodingErrors();
+    assertEquals("decoding errror count", expectedCommandCount, actualCommandCount);
+  }
+
   private StatisticsMBean createStatisticsMBean() {
-    return new Statistics(proxyMock, connectionStatisticsMock);
+    return new Statistics(proxyMock, connectionStatisticsMock, decodingStatisticsMock);
   }
 }
