@@ -120,7 +120,7 @@ public class MemcachedBinaryResponseEncoder extends SimpleChannelUpstreamHandler
       throw e.getCause();
     } catch (final UnknownCommandException unknownCommand) {
       if (ctx.getChannel().isOpen()) {
-        ctx.getChannel().write(constructHeader(MemcachedBinaryCommandDecoder.BinaryOp.Noop, null, null, null, (short)0x0081, 0, 0));
+        ctx.getChannel().write(constructHeader(MemcachedBinaryCommandDecoder.BinaryOp.Noop, null, null, null, (short) 0x0081, 0, 0));
       }
     } catch (final Throwable err) {
       logger.error("error", err);
@@ -148,10 +148,12 @@ public class MemcachedBinaryResponseEncoder extends SimpleChannelUpstreamHandler
     // write value if there is one
     ChannelBuffer valueBuffer = null;
     if (command.elements != null) {
-      extrasBuffer = ChannelBuffers.buffer(ByteOrder.BIG_ENDIAN, 4);
       final CacheElement element = command.elements[0];
-      extrasBuffer.writeShort((short) (element != null ? element.getExpire() : 0));
-      extrasBuffer.writeShort((short) (element != null ? element.getFlags() : 0));
+      if (element != null) {
+        extrasBuffer = ChannelBuffers.buffer(ByteOrder.BIG_ENDIAN, 4);
+        extrasBuffer.writeShort((short) element.getExpire());
+        extrasBuffer.writeShort((short) element.getFlags());
+      }
 
       if ((command.cmd.op == Op.GET || command.cmd.op == Op.GETS)) {
         if (element != null) {
@@ -207,7 +209,7 @@ public class MemcachedBinaryResponseEncoder extends SimpleChannelUpstreamHandler
       // is the command 'quiet?' if so, then we append to our 'corked' buffer until a non-corked command comes along
       if (bcmd.noreply) {
         final int totalCapacity = headerBuffer.capacity() + (extrasBuffer != null ? extrasBuffer.capacity() : 0)
-        + (keyBuffer != null ? keyBuffer.capacity() : 0) + (valueBuffer != null ? valueBuffer.capacity() : 0);
+            + (keyBuffer != null ? keyBuffer.capacity() : 0) + (valueBuffer != null ? valueBuffer.capacity() : 0);
 
         final ChannelBuffer corkedResponse  = cork(command.cmd.opaque, totalCapacity);
 
