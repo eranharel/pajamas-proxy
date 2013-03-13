@@ -15,11 +15,6 @@
  */
 package com.outbrain.pajamasproxy.memcached.server.protocol.value;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.buffer.ChannelBuffers;
 
 /**
  */
@@ -27,20 +22,4 @@ public enum Op {
   GET, GETS, APPEND, PREPEND, DELETE, DECR,
   INCR, REPLACE, ADD, SET, CAS, STATS, VERSION,
   QUIT, FLUSH_ALL, VERBOSITY;
-
-  private static Map<ChannelBuffer, Op> opsbf = new HashMap<ChannelBuffer, Op>();
-
-  static {
-    for (int x = 0 ; x < Op.values().length; x++) {
-      final byte[] bytes = Op.values()[x].toString().toLowerCase().getBytes();
-      opsbf.put(ChannelBuffers.wrappedBuffer(bytes), Op.values()[x]);
-    }
-  }
-
-
-  public static Op findOp(final ChannelBuffer cmd) {
-    cmd.readerIndex(0);
-    return opsbf.get(cmd);
-  }
-
 }

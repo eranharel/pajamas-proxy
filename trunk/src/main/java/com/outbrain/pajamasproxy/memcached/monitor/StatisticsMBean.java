@@ -41,4 +41,8 @@ public interface StatisticsMBean {
    */
   public abstract int getErrors();
 
+  /**
+   * @return the number of memcached commands decoding errors.
+   */
+  public long getDecodingErrors();
 }

@@ -34,9 +34,7 @@
     <constructor-arg ref="channelFactory"/>
     <property name="pipelineFactory">
       <bean class="com.outbrain.pajamasproxy.memcached.server.protocol.binary.MemcachedBinaryPipelineFactory">
-        <constructor-arg>
-          <bean class="com.outbrain.pajamasproxy.memcached.server.protocol.binary.MemcachedBinaryCommandDecoder"/>
-        </constructor-arg>
+        <constructor-arg ref="memcachedBinaryCommandDecoder"/>
         <constructor-arg ref="memcachedCommandHandler"/>
         <constructor-arg>
           <bean class="com.outbrain.pajamasproxy.memcached.server.protocol.binary.MemcachedBinaryResponseEncoder"/>
@@ -51,6 +49,8 @@
     </property>
   </bean>
 
+  <bean id="memcachedBinaryCommandDecoder" class="com.outbrain.pajamasproxy.memcached.server.protocol.binary.MemcachedBinaryCommandDecoder"/>
+  
   <bean id="memcachedCommandHandler" class="com.outbrain.pajamasproxy.memcached.server.protocol.MemcachedCommandHandler">
     <constructor-arg ref="cacheProxy" />
     <constructor-arg value="1.4.5" /><!-- TODO pass this from maven? -->
