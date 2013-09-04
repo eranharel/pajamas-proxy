@@ -22,7 +22,8 @@
 	<bean id="statisticsMBean" class="com.outbrain.pajamasproxy.memcached.monitor.Statistics">
     <constructor-arg ref="cacheProxy"/>
     <constructor-arg ref="memcachedCommandHandler"/>
-    <constructor-arg ref="memcachedBinaryCommandDecoder"/>
+    <!-- TODO expose the counters, not this implementation... -->
+    <constructor-arg><bean class="com.outbrain.pajamasproxy.memcached.server.protocol.binary.MemcachedBinaryCommandDecoder"/></constructor-arg>
 	</bean>
 	
 	<bean id="cacheClusterMBean" class="com.outbrain.pajamasproxy.memcached.monitor.CacheCluster">

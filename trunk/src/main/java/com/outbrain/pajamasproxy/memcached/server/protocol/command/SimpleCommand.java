@@ -1,20 +1,18 @@
 package com.outbrain.pajamasproxy.memcached.server.protocol.command;
 
-import org.jboss.netty.channel.Channel;
-import org.jboss.netty.channel.ChannelHandlerContext;
-import org.jboss.netty.channel.Channels;
-
 import com.outbrain.pajamasproxy.memcached.server.protocol.value.CommandMessage;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
 
 
 public class SimpleCommand extends AbstractCommand {
 
-  public SimpleCommand(final ChannelHandlerContext channelHandlerContext, final CommandMessage command, final Channel channel) {
-    super(channelHandlerContext, command, channel);
+  public SimpleCommand(final CommandMessage command, final Channel channel) {
+    super(command, channel);
   }
 
   @Override
   public void execute() throws InterruptedException {
-    Channels.fireMessageReceived(channelHandlerContext, responseMessage, channel.getRemoteAddress());
+    channel.writeAndFlush(responseMessage);
   }
 }

@@ -1,61 +1,62 @@
 package com.outbrain.pajamasproxy.memcached.server.protocol.command;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.Executors;
 
 import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.lmax.disruptor.EventFactory;
+import com.lmax.disruptor.EventHandler;
+import com.lmax.disruptor.RingBuffer;
+import com.lmax.disruptor.SleepingWaitStrategy;
+import com.lmax.disruptor.dsl.Disruptor;
+import com.lmax.disruptor.dsl.ProducerType;
 
-class CommandQueueImpl implements CommandQueue, CommandPoller {
+class CommandQueueImpl implements CommandQueue, EventHandler<CommandQueueImpl.ProfiledCommand> {
 
   private static final Logger log = LoggerFactory.getLogger(CommandQueueImpl.class);
+  private final RingBuffer<ProfiledCommand> ringBuffer;
 
-  private final BlockingQueue<ProfiledCommand> q = new LinkedBlockingQueue<ProfiledCommand>();
-
-  /* (non-Javadoc)
-   * @see com.thimbleware.jmemcached.CommandQueue#enqueueFutureResponse(com.thimbleware.jmemcached.command.AsyncCommand)
-   */
-  @Override
-  public void enqueueFutureResponse(final Command command) {
-    q.add(new ProfiledCommand(command));
+  public CommandQueueImpl() {
+    Disruptor<ProfiledCommand> disruptor = new Disruptor<ProfiledCommand>(new ProfiledCommandFactory(), 16384, Executors.newSingleThreadExecutor(),
+        ProducerType.MULTI, new SleepingWaitStrategy());
+    disruptor.handleEventsWith(this);
+    ringBuffer = disruptor.start();
   }
 
-  /* (non-Javadoc)
-   * @see com.outbrain.pajamasproxy.memcached.command.CommandPoller#run()
-   */
   @Override
-  public void run() {
-    // TODO we may need a more delicate error handling...
-    // timeouts propagate as RuntimeExceptions
-    while (true) {
-      ProfiledCommand profiledCommand = null;
-      try {
-        profiledCommand = q.take();
-        log.debug("executing {} command", profiledCommand.command.getClass());
-        profiledCommand.command.execute();
-      } catch (final InterruptedException e) {
-        Thread.currentThread().interrupt();
-        break;
-      } catch (final Exception e) {
-        log.error("Failed to execute command. We shouldn't get here...", e);
-      } finally {
-        if (profiledCommand != null) {
-          profiledCommand.stopWatch.stop();
-        }
-      }
+  public void enqueueFutureResponse(final Command command) {
+    long seq = ringBuffer.next();
+    ProfiledCommand profiledCommand = ringBuffer.get(seq);
+    profiledCommand.setCommand(command);
+    ringBuffer.publish(seq);
+  }
+
+  @Override
+  public void onEvent(ProfiledCommand event, long sequence, boolean endOfBatch) throws Exception {
+    log.debug("executing {} command", event.command.getClass());
+    try {
+      event.command.execute();
+    } finally {
+      event.stopWatch.stop();
     }
   }
 
-  private static class ProfiledCommand {
-    private final Command command;
-    private final StopWatch stopWatch;
+  public static class ProfiledCommand {
+    private Command command;
+    private StopWatch stopWatch;
 
-    public ProfiledCommand(final Command command) {
+    public void setCommand(final Command command) {
       this.command = command;
       this.stopWatch = new Slf4JStopWatch(command.getClass().getName());
+    }
+  }
+
+  private static class ProfiledCommandFactory implements EventFactory<ProfiledCommand> {
+    public ProfiledCommand newInstance() {
+      return new ProfiledCommand();
     }
   }
 }

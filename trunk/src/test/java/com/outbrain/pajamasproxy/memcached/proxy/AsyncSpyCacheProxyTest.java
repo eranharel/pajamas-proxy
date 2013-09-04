@@ -1,10 +1,7 @@
 package com.outbrain.pajamasproxy.memcached.proxy;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -24,7 +21,6 @@ import net.spy.memcached.MemcachedClientIF;
 import net.spy.memcached.internal.BulkFuture;
 import net.spy.memcached.ops.OperationStatus;
 
-import org.jboss.netty.buffer.ChannelBuffers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,6 +32,7 @@ import com.outbrain.pajamasproxy.memcached.adapter.Key;
 import com.outbrain.pajamasproxy.memcached.adapter.LocalCacheElement;
 import com.outbrain.pajamasproxy.memcached.proxy.value.DeleteResponse;
 import com.outbrain.pajamasproxy.memcached.proxy.value.StoreResponse;
+import io.netty.buffer.Unpooled;
 
 /**
  * Test cases for the {@link AsyncSpyCacheProxy} implementation.
@@ -46,8 +43,8 @@ public class AsyncSpyCacheProxyTest {
 
   private static final String TEST_KEY_STRING1 = "test-key1";
   private static final String TEST_KEY_STRING2 = "test-key2";
-  private static Key KEY1 = new Key(ChannelBuffers.wrappedBuffer(TEST_KEY_STRING1.getBytes()));
-  private static Key KEY2 = new Key(ChannelBuffers.wrappedBuffer(TEST_KEY_STRING2.getBytes()));
+  private static Key KEY1 = new Key(Unpooled.wrappedBuffer(TEST_KEY_STRING1.getBytes()));
+  private static Key KEY2 = new Key(Unpooled.wrappedBuffer(TEST_KEY_STRING2.getBytes()));
 
   private static final LocalCacheElement CACHE_ELEMENT = new LocalCacheElement(KEY1, 0x6, 10, 0);
 
@@ -392,11 +389,11 @@ public class AsyncSpyCacheProxyTest {
     public V getSome(final long timeout, final TimeUnit unit) throws InterruptedException, ExecutionException {
       return null;
     }
-    
+
     @Override
     public OperationStatus getStatus() {
-    	// TODO Auto-generated method stub
-    	return null;
+      // TODO Auto-generated method stub
+      return null;
     }
   }
 }

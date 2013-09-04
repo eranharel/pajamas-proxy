@@ -2,10 +2,8 @@ package com.outbrain.pajamasproxy.memcached.adapter;
 
 import net.spy.memcached.CachedData;
 import net.spy.memcached.transcoders.Transcoder;
-
-import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.buffer.ChannelBuffers;
-
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 /**
  * An adapter between the Jmemcached server and Spymemcached client APIs.
@@ -25,7 +23,7 @@ public class SpyCacheElementTranscoder implements Transcoder<Object> {
   @Override
   public CacheElement decode(final CachedData cachedData) {
     final LocalCacheElement element = new LocalCacheElement(null, cachedData.getFlags(), 0, /*cachedData.getCas()*/0);
-    final ChannelBuffer data = ChannelBuffers.wrappedBuffer(cachedData.getData());
+    final ByteBuf data = Unpooled.wrappedBuffer(cachedData.getData());
     element.setData(data);
 
     return element;

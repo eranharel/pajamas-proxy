@@ -2,36 +2,30 @@ package com.outbrain.pajamasproxy.memcached.server.protocol.command;
 
 import java.util.concurrent.Future;
 
-import org.jboss.netty.channel.Channel;
-import org.jboss.netty.channel.ChannelHandlerContext;
-import org.jboss.netty.channel.Channels;
-
 import com.outbrain.pajamasproxy.memcached.server.protocol.value.CommandMessage;
+import io.netty.channel.Channel;
 
 public abstract class AbstractAsyncCommand<V> extends AbstractCommand {
 
   protected final Future<V> futureResponse;
 
-  public AbstractAsyncCommand(final ChannelHandlerContext channelHandlerContext, final CommandMessage command, final Channel channel, final Future<V> futureResponse) {
-    super(channelHandlerContext, command, channel);
+  public AbstractAsyncCommand(final CommandMessage command, final Channel channel, final Future<V> futureResponse) {
+    super(command, channel);
     this.futureResponse = futureResponse;
   }
 
-  /* (non-Javadoc)
-   * @see com.outbrain.pajamasproxy.memcached.command.AsyncCommand#execute()
-   */
   @Override
   public void execute() throws InterruptedException {
     try {
       final V spyResponse = futureResponse.get();
       appendValueToResponse(spyResponse);
-      Channels.fireMessageReceived(channelHandlerContext, responseMessage, channel.getRemoteAddress());
+      channel.writeAndFlush(responseMessage);
     } catch (final InterruptedException e) {
       Thread.currentThread().interrupt();
       throw e;
     } catch (final Exception e) {
       log.error("failed to execute command", e);
-      Channels.fireExceptionCaught(channel, e);
+      channel.pipeline().fireExceptionCaught(e);
     }
   }
 

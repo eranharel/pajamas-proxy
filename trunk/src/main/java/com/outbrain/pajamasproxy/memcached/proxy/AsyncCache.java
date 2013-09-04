@@ -91,6 +91,13 @@ public interface AsyncCache {
 
   /**
    * Get element(s) from the cache
+   * @param key the key for the element to lookup
+   * @return the element found for the specified key. May contain <code>null</code>s in case of cache misses.
+   */
+  Future<CacheElement> get(Key key);
+
+  /**
+   * Get element(s) from the cache
    * @param keys the key for the element to lookup
    * @return the elements found for the specified key. May contain <code>null</code>s in case of cache misses.
    */
