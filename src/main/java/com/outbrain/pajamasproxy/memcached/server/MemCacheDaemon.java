@@ -17,80 +17,68 @@ package com.outbrain.pajamasproxy.memcached.server;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.concurrent.TimeUnit;
 
-import org.jboss.netty.bootstrap.ServerBootstrap;
-import org.jboss.netty.channel.Channel;
-import org.jboss.netty.channel.group.ChannelGroup;
-import org.jboss.netty.channel.group.ChannelGroupFuture;
-import org.jboss.netty.channel.socket.ServerSocketChannelFactory;
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.outbrain.pajamasproxy.memcached.adapter.CacheElement;
 import com.outbrain.pajamasproxy.memcached.proxy.AsyncCache;
-import com.outbrain.pajamasproxy.memcached.server.protocol.command.CommandPoller;
 
 /**
  * The actual daemon - responsible for the binding and configuration of the network configuration.
  */
-public class MemCacheDaemon<CACHE_ELEMENT extends CacheElement> {
+public class MemCacheDaemon {
 
   final Logger log = LoggerFactory.getLogger(MemCacheDaemon.class);
 
   private InetSocketAddress addr;
   private final AsyncCache cache;
-  private final Thread commandPoller;
+
+  private final EventLoopGroup eventLoopGroup;
+  private final ChannelHandler serverPipelineFactory;
 
   private boolean running = false;
-  private final ServerSocketChannelFactory channelFactory;
-  private final ChannelGroup allChannels;
 
-  private final ServerBootstrap serverBootstrap;
-
-  public MemCacheDaemon(final AsyncCache cache, final CommandPoller commandPoller, final ServerSocketChannelFactory channelFactory, final ChannelGroup allChannels, final ServerBootstrap serverBootstrap) {
+  public MemCacheDaemon(final AsyncCache cache, EventLoopGroup eventLoopGroup, ChannelHandler serverPipelineFactory) {
     this.cache = cache;
-    this.commandPoller = new Thread(commandPoller);
-    this.channelFactory = channelFactory;
-    this.allChannels = allChannels;
-    this.serverBootstrap = serverBootstrap;
+    this.eventLoopGroup = eventLoopGroup;
+    this.serverPipelineFactory = serverPipelineFactory;
   }
 
   /**
    * Bind the network connection and start the network processing threads.
    */
   public void start() {
+    createBootstratp();
+  }
 
-    commandPoller.start();
+  private void createBootstratp() {
+    log.info("Initializing TCP...");
+    ServerBootstrap tcpBootstrap = new ServerBootstrap();
+    tcpBootstrap.group(eventLoopGroup);
+    tcpBootstrap.channel(NioServerSocketChannel.class);
+    tcpBootstrap.childHandler(serverPipelineFactory);
 
-    final Channel serverChannel = serverBootstrap.bind(addr);
-    allChannels.add(serverChannel);
-
-    log.info("Listening on " + String.valueOf(addr.getHostName()) + ":" + addr.getPort());
-
-    running = true;
+    final ChannelFuture channelFuture = tcpBootstrap.bind(addr).addListener(new ChannelFutureListener() {
+      @Override
+      public void operationComplete(ChannelFuture future) throws Exception {
+        log.info("Server started; listening to {}", addr);
+        running = true;
+      }
+    });
   }
 
   public void stop() {
-    log.info("terminating daemon; closing all channels");
-
-    commandPoller.interrupt();
-
-    final ChannelGroupFuture future = allChannels.close();
-    future.awaitUninterruptibly();
-    if (!future.isCompleteSuccess()) {
-      throw new RuntimeException("failure to complete closing all network channels");
-    }
-
-    log.info("channels closed, closing cache");
-    try {
-      cache.close();
-    } catch (final IOException e) {
-      throw new RuntimeException("exception while closing storage", e);
-    }
-
-    channelFactory.releaseExternalResources();
-
-    running = false;
+    log.info("terminating daemon;");
+    eventLoopGroup.shutdownGracefully(1, 5, TimeUnit.SECONDS);
     log.info("successfully shut down");
   }
 

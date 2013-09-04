@@ -5,57 +5,29 @@
 
   <bean id="daemon" class="com.outbrain.pajamasproxy.memcached.server.MemCacheDaemon" destroy-method="stop">
     <constructor-arg ref="cacheProxy"/>
-    <constructor-arg ref="commandQueue"/>
-    <constructor-arg ref="channelFactory"/>
-    <constructor-arg ref="allChannels"/>
-    <constructor-arg ref="serverBootstrap"/>
-    
+    <constructor-arg ref="eventLoopGroup"/>
+    <constructor-arg ref="memcachedBinaryPipelineFactory"/>
+
     <property name="addr">
       <bean class="java.net.InetSocketAddress">
         <constructor-arg value="${pajamas.localPort}"/>
       </bean>
     </property>
   </bean>
-  
-  <bean id="channelFactory" class="org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory">
-    <constructor-arg>
-      <bean class="java.util.concurrent.Executors" factory-method="newCachedThreadPool"/>
-    </constructor-arg>
-    <constructor-arg>
-      <bean class="java.util.concurrent.Executors" factory-method="newCachedThreadPool"/>
-    </constructor-arg>
-  </bean>
-  
-  <bean id="allChannels" class="org.jboss.netty.channel.group.DefaultChannelGroup">
-    <constructor-arg value="jmemcachedChannelGroup"/>
-  </bean>
-  
-  <bean id="serverBootstrap" class="org.jboss.netty.bootstrap.ServerBootstrap">
-    <constructor-arg ref="channelFactory"/>
-    <property name="pipelineFactory">
-      <bean class="com.outbrain.pajamasproxy.memcached.server.protocol.binary.MemcachedBinaryPipelineFactory">
-        <constructor-arg ref="memcachedBinaryCommandDecoder"/>
-        <constructor-arg ref="memcachedCommandHandler"/>
-        <constructor-arg>
-          <bean class="com.outbrain.pajamasproxy.memcached.server.protocol.binary.MemcachedBinaryResponseEncoder"/>
-        </constructor-arg>
-      </bean>
-    </property>
-    <property name="options">
-      <map>
-        <entry key="sendBufferSize" value="65536"/>
-        <entry key="receiveBufferSize" value="65536"/>
-      </map>
-    </property>
+
+  <bean id="memcachedBinaryPipelineFactory" class="com.outbrain.pajamasproxy.memcached.server.protocol.binary.MemcachedBinaryPipelineFactory">
+    <constructor-arg ref="memcachedCommandHandler"/>
+    <constructor-arg ref="memcachedBinaryResponseEncoder"/>
   </bean>
 
-  <bean id="memcachedBinaryCommandDecoder" class="com.outbrain.pajamasproxy.memcached.server.protocol.binary.MemcachedBinaryCommandDecoder"/>
-  
+  <bean id="eventLoopGroup" class="io.netty.channel.nio.NioEventLoopGroup"/>
+
+  <bean id="memcachedBinaryResponseEncoder" class="com.outbrain.pajamasproxy.memcached.server.protocol.binary.MemcachedBinaryResponseEncoder"/>
+
   <bean id="memcachedCommandHandler" class="com.outbrain.pajamasproxy.memcached.server.protocol.MemcachedCommandHandler">
     <constructor-arg ref="cacheProxy" />
-    <constructor-arg value="1.4.5" /><!-- TODO pass this from maven? -->
+    <constructor-arg value="1.4.14" /><!-- TODO pass this from maven? -->
     <constructor-arg value="${pajamas.deamon.verbose}" />
-    <constructor-arg ref="allChannels" />
     <constructor-arg ref="commandQueue"/>
   </bean>    
 

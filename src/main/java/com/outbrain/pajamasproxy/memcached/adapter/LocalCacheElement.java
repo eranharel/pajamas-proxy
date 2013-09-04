@@ -20,8 +20,8 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
-import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.buffer.ChannelBuffers;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 
 /**
@@ -30,7 +30,7 @@ import org.jboss.netty.buffer.ChannelBuffers;
 public final class LocalCacheElement implements CacheElement, Externalizable {
   private int expire ;
   private int flags;
-  private ChannelBuffer data;
+  private ByteBuf data;
   private Key key;
   private long casUnique = 0L;
 
@@ -122,7 +122,7 @@ public final class LocalCacheElement implements CacheElement, Externalizable {
   }
 
   @Override
-  public ChannelBuffer getData() {
+  public ByteBuf getData() {
     data.readerIndex(0);
     return data;
   }
@@ -143,7 +143,7 @@ public final class LocalCacheElement implements CacheElement, Externalizable {
   }
 
   @Override
-  public void setData(final ChannelBuffer data) {
+  public void setData(final ByteBuf data) {
     data.readerIndex(0);
     this.data = data;
   }
@@ -159,12 +159,12 @@ public final class LocalCacheElement implements CacheElement, Externalizable {
     while( readSize < length) {
       readSize += in.read(dataArrary, readSize, length - readSize);
     }
-    data = ChannelBuffers.wrappedBuffer(dataArrary);
+    data = Unpooled.wrappedBuffer(dataArrary);
 
 
     final byte[] keyBytes = new byte[in.readInt()];
     in.read(keyBytes);
-    key = new Key(ChannelBuffers.wrappedBuffer(keyBytes));
+    key = new Key(Unpooled.wrappedBuffer(keyBytes));
     casUnique = in.readLong();
   }
 
