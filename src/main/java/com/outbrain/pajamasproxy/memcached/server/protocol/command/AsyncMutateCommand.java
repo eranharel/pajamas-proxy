@@ -2,15 +2,15 @@ package com.outbrain.pajamasproxy.memcached.server.protocol.command;
 
 import java.util.concurrent.Future;
 
-import org.jboss.netty.channel.Channel;
-import org.jboss.netty.channel.ChannelHandlerContext;
-
 import com.outbrain.pajamasproxy.memcached.server.protocol.value.CommandMessage;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
 
 public class AsyncMutateCommand extends AbstractAsyncCommand<Long> {
 
-  public AsyncMutateCommand(final ChannelHandlerContext channelHandlerContext, final CommandMessage command, final Channel channel, final Future<Long> futureResponse) {
-    super(channelHandlerContext, command, channel, futureResponse);
+  public AsyncMutateCommand(final CommandMessage command, final Channel channel,
+      final Future<Long> futureResponse) {
+    super(command, channel, futureResponse);
   }
 
   @Override

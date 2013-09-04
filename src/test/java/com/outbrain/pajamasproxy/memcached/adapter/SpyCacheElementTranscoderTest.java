@@ -2,10 +2,10 @@ package com.outbrain.pajamasproxy.memcached.adapter;
 
 import net.spy.memcached.CachedData;
 
-import org.jboss.netty.buffer.ChannelBuffers;
 import org.junit.Assert;
 import org.junit.Test;
 
+import io.netty.buffer.Unpooled;
 
 /**
  * Test cases for the {@link SpyCacheElementTranscoder}
@@ -21,7 +21,7 @@ public class SpyCacheElementTranscoderTest {
   @Test
   public void testEncode() {
     final LocalCacheElement cacheElement = new LocalCacheElement(null, FLAGS, 0, 0);
-    cacheElement.setData(ChannelBuffers.wrappedBuffer(DATA.getBytes()));
+    cacheElement.setData(Unpooled.wrappedBuffer(DATA.getBytes()));
     final CachedData cachedData = new SpyCacheElementTranscoder().encode(cacheElement);
 
     // verify that we don't copy byte arrays...

@@ -15,10 +15,12 @@
     </property>
     <property name="opTimeout" value="${pajamas.client.operationTimeout}"/>
     <property name="timeoutExceptionThreshold" value="${pajamas.client.timeoutExceptionThreshold}"/>
-    <property name="hashAlg" value="${pajamas.client.hashAlg}"/>
+    <property name="hashAlg">
+      <value type="net.spy.memcached.DefaultHashAlgorithm">${pajamas.client.hashAlg}</value>
+    </property>
     <property name="locatorType" value="${pajamas.client.locatorType}"/>
     <property name="failureMode" value="${pajamas.client.failureMode}"/>
     <property name="useNagleAlgorithm" value="${pajamas.client.usenagle}"/>
-  </bean>  
+  </bean>
 	
 </beans>

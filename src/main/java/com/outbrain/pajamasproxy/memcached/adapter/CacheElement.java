@@ -2,7 +2,7 @@ package com.outbrain.pajamasproxy.memcached.adapter;
 
 import java.io.Serializable;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 
 /**
  */
@@ -18,9 +18,9 @@ public interface CacheElement extends Serializable {
 
   int getFlags();
 
-  ChannelBuffer getData();
+  ByteBuf getData();
 
-  void setData(ChannelBuffer data);
+  void setData(ByteBuf data);
 
   Key getKey();
 

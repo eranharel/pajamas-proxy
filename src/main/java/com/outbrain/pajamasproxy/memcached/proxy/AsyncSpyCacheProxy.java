@@ -15,6 +15,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.outbrain.pajamasproxy.memcached.proxy.future.GetMultiFuture;
 import net.spy.memcached.MemcachedClientIF;
 
 import org.slf4j.Logger;
@@ -110,7 +111,17 @@ class AsyncSpyCacheProxy implements AsyncCache, MemcachedProxyStatistics {
     final List<String> stringKeys = extractStringKeys(keys);
     log.debug("get({})", stringKeys);
 
-    return new GetFuture(memcachedClient.asyncGetBulk(stringKeys), stringKeys, getHits, getMisses);
+    return new GetMultiFuture(memcachedClient.asyncGetBulk(stringKeys), stringKeys, getHits, getMisses);
+  }
+
+  @Override
+  public Future<CacheElement> get(Key key) {
+    getCmds.incrementAndGet();
+
+    String stringKey = toStringKey(key);
+    log.debug("get({})", stringKey);
+
+    return new GetFuture(memcachedClient.asyncGet(stringKey), stringKey, getHits, getMisses);
   }
 
   private List<String> extractStringKeys(final Collection<Key> keys) {

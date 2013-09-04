@@ -18,10 +18,9 @@ package com.outbrain.pajamasproxy.memcached.server.protocol.value;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.netty.buffer.ChannelBuffer;
-
 import com.outbrain.pajamasproxy.memcached.adapter.CacheElement;
 import com.outbrain.pajamasproxy.memcached.adapter.Key;
+import io.netty.buffer.ByteBuf;
 
 /**
  * The payload object holding the parsed message.
@@ -36,7 +35,6 @@ public final class CommandMessage {
   public int time = 0;
   public int opaque;
   public boolean addKeyToResponse = false;
-
   public int incrExpiry;
   public int incrAmount;
 
@@ -45,19 +43,19 @@ public final class CommandMessage {
     element = null;
   }
 
-  public void setKey(final ChannelBuffer key) {
+  public static CommandMessage command(final Op operation) {
+    return new CommandMessage(operation);
+  }
+
+  public void setKey(final ByteBuf key) {
     this.keys = new ArrayList<Key>();
     this.keys.add(new Key(key));
   }
 
-  public void setKeys(final List<ChannelBuffer> keys) {
+  public void setKeys(final List<ByteBuf> keys) {
     this.keys = new ArrayList<Key>(keys.size());
-    for (final ChannelBuffer key : keys) {
+    for (final ByteBuf key : keys) {
       this.keys.add(new Key(key));
     }
-  }
-
-  public static CommandMessage command(final Op operation) {
-    return new CommandMessage(operation);
   }
 }

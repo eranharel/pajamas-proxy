@@ -9,7 +9,7 @@ public class PajamasProxyDaemon {
   //  private static final Logger log = LoggerFactory.getLogger(PajamasProxyDaemon.class);
 
   public static void main(final String[] args) {
-    final MemCacheDaemon<?> daemon = new ClassPathXmlApplicationContext("ApplicationContext.xml").getBean(MemCacheDaemon.class);
+    final MemCacheDaemon daemon = new ClassPathXmlApplicationContext("ApplicationContext.xml").getBean(MemCacheDaemon.class);
     daemon.start();
 
     Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
