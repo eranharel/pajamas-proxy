@@ -38,25 +38,23 @@ public class MemcachedBinaryCommandDecoder extends ByteToMessageDecoder implemen
 
     // get the header
     in.markReaderIndex();
-    final ByteBuf headerBuffer = Unpooled.buffer(24);
-    in.readBytes(headerBuffer);
 
-    final short magic = headerBuffer.readUnsignedByte();
+    final short magic = in.readUnsignedByte();
 
     // magic should be 0x80
     if (magic != 0x80) {
-      headerBuffer.resetReaderIndex();
+      in.resetReaderIndex();
       throw new MalformedCommandException("binary request payload is invalid, magic byte incorrect");
     }
 
-    final short opcode = headerBuffer.readUnsignedByte();
-    final short keyLength = headerBuffer.readShort();
-    final short extraLength = headerBuffer.readUnsignedByte();
-    /*final short dataType = */headerBuffer.readUnsignedByte(); // unused
-    /*final short reserved = */headerBuffer.readShort(); // unused
-    final int totalBodyLength = headerBuffer.readInt();
-    final int opaque = headerBuffer.readInt();
-    final long cas = headerBuffer.readLong();
+    final short opcode = in.readUnsignedByte();
+    final short keyLength = in.readShort();
+    final short extraLength = in.readUnsignedByte();
+    /*final short dataType = */in.readUnsignedByte(); // unused
+    /*final short reserved = */in.readShort(); // unused
+    final int totalBodyLength = in.readInt();
+    final int opaque = in.readInt();
+    final long cas = in.readLong();
 
     // we want the whole of totalBodyLength; otherwise, keep waiting.
     if (in.readableBytes() < totalBodyLength) {
@@ -84,8 +82,7 @@ public class MemcachedBinaryCommandDecoder extends ByteToMessageDecoder implemen
     if (keyLength != 0) {
       final ByteBuf keyBuffer = Unpooled.buffer(keyLength);
       in.readBytes(keyBuffer);
-      // TODO what do we need a collection of keys for if we only place a single element there???
-      cmdMessage.keys = Collections.singletonList(new Key(keyBuffer.copy()));
+      cmdMessage.key = new Key(keyBuffer);
 
       if (cmdType == Op.ADD || cmdType == Op.SET || cmdType == Op.REPLACE || cmdType == Op.APPEND || cmdType == Op.PREPEND) {
         // TODO these are backwards from the spec, but seem to be what spymemcached demands -- which has the mistake?!
@@ -95,7 +92,7 @@ public class MemcachedBinaryCommandDecoder extends ByteToMessageDecoder implemen
         // the remainder of the message -- that is, totalLength - (keyLength + extraLength) should be the payload
         final int size = totalBodyLength - keyLength - extraLength;
 
-        cmdMessage.element = new LocalCacheElement(new Key(keyBuffer.slice()), flags, expire, 0L);
+        cmdMessage.element = new LocalCacheElement(cmdMessage.key, flags, expire, 0L);
         final ByteBuf data = Unpooled.buffer(size);
         in.readBytes(data);
         cmdMessage.element.setData(data);

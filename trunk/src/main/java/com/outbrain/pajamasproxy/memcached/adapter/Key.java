@@ -13,7 +13,7 @@ public class Key {
   public ByteBuf bytes;
 
   public Key(final ByteBuf bytes) {
-    this.bytes = Unpooled.copiedBuffer(bytes)/*.copy()*/;
+    this.bytes = bytes;
     this.hashCode = this.bytes.hashCode();
   }
 
