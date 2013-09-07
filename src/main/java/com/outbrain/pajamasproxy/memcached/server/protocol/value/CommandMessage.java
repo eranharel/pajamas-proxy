@@ -29,7 +29,7 @@ public final class CommandMessage {
 
   public Op op;
   public CacheElement element;
-  public List<Key> keys;
+  public Key key;
   public boolean noreply;
   public long cas_key;
   public int time = 0;
@@ -47,15 +47,4 @@ public final class CommandMessage {
     return new CommandMessage(operation);
   }
 
-  public void setKey(final ByteBuf key) {
-    this.keys = new ArrayList<Key>();
-    this.keys.add(new Key(key));
-  }
-
-  public void setKeys(final List<ByteBuf> keys) {
-    this.keys = new ArrayList<Key>(keys.size());
-    for (final ByteBuf key : keys) {
-      this.keys.add(new Key(key));
-    }
-  }
 }

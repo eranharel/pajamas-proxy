@@ -15,9 +15,11 @@
  */
 package com.outbrain.pajamasproxy.memcached.server.protocol;
 
+import java.util.Collections;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.outbrain.pajamasproxy.memcached.adapter.Key;
 import com.outbrain.pajamasproxy.memcached.server.protocol.command.AsyncGetMultiCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,10 +108,6 @@ public final class MemcachedCommandHandler extends SimpleChannelInboundHandler<C
   protected void channelRead0(ChannelHandlerContext channelHandlerContext, CommandMessage command) throws Exception {
 
     final Op cmd = command.op;
-    final int cmdKeysSize = command.keys == null ? 0 : command.keys.size();
-
-    // first process any messages in the delete queue
-    //cache.asyncEventPing();
 
     // now do the real work
     if (this.verbose) {
@@ -118,9 +116,7 @@ public final class MemcachedCommandHandler extends SimpleChannelInboundHandler<C
       if (command.element != null) {
         log.append(" ").append(command.element.getKey());
       }
-      for (int i = 0; i < cmdKeysSize; i++) {
-        log.append(" ").append(command.keys.get(i));
-      }
+      log.append(" ").append(command.key);
       logger.info(log.toString());
     }
 
@@ -163,7 +159,7 @@ public final class MemcachedCommandHandler extends SimpleChannelInboundHandler<C
         handleCas(command, channel);
         break;
       case STATS:
-        handleStats(command, cmdKeysSize, channel);
+        handleStats(command, channel);
         break;
       case VERSION:
         handleVersion(command, channel);
@@ -205,28 +201,27 @@ public final class MemcachedCommandHandler extends SimpleChannelInboundHandler<C
     commandQueue.enqueueFutureResponse(new VersionCommand(command, channel, version));
   }
 
-  protected void handleStats(final CommandMessage command, final int cmdKeysSize,
-      final Channel channel) {
+  protected void handleStats(final CommandMessage command, final Channel channel) {
     String option = "";
-    if (cmdKeysSize > 0) {
-      option = command.keys.get(0).bytes.toString();
+    if (command.key != null) {
+      option = command.key.bytes.toString();
     }
 
     commandQueue.enqueueFutureResponse(new StatsCommand(command, channel, cache.stats(option)));
   }
 
   protected void handleDelete(final CommandMessage command, final Channel channel) {
-    final Future<DeleteResponse> futureResponse = cache.delete(command.keys.get(0));
+    final Future<DeleteResponse> futureResponse = cache.delete(command.key);
     commandQueue.enqueueFutureResponse(new AsyncDeleteCommand(command, channel, futureResponse));
   }
 
   protected void handleDecr(final CommandMessage command, final Channel channel) {
-    final Future<Long> futureResponse = cache.decrement(command.keys.get(0), command.incrAmount);
+    final Future<Long> futureResponse = cache.decrement(command.key, command.incrAmount);
     commandQueue.enqueueFutureResponse(new AsyncMutateCommand(command, channel, futureResponse));
   }
 
   protected void handleIncr(final CommandMessage command, final Channel channel) {
-    final Future<Long> futureResponse = cache.increment(command.keys.get(0), command.incrAmount);
+    final Future<Long> futureResponse = cache.increment(command.key, command.incrAmount);
     commandQueue.enqueueFutureResponse(new AsyncMutateCommand(command, channel, futureResponse));
   }
 
@@ -261,12 +256,13 @@ public final class MemcachedCommandHandler extends SimpleChannelInboundHandler<C
   }
 
   protected void handleGet(final CommandMessage command, final Channel channel) {
-    final Future<CacheElement> futureResponse = cache.get(command.keys.get(0));
+    final Future<CacheElement> futureResponse = cache.get(command.key);
     commandQueue.enqueueFutureResponse(new AsyncGetCommand(command, channel, futureResponse));
   }
 
   protected void handleGets(final CommandMessage command, final Channel channel) {
-    final Future<CacheElement[]> futureResponse = cache.get(command.keys);
+    // TODO we never really get here...
+    final Future<CacheElement[]> futureResponse = cache.get(Collections.<Key>singleton(command.key));
     commandQueue.enqueueFutureResponse(new AsyncGetMultiCommand(command, channel, futureResponse));
   }
 

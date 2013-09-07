@@ -15,20 +15,13 @@
  */
 package com.outbrain.pajamasproxy.memcached.adapter;
 
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
-
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-
 
 /**
  * Represents information about a cache entry.
  */
-public final class LocalCacheElement implements CacheElement, Externalizable {
-  private int expire ;
+public final class LocalCacheElement implements CacheElement {
+  private int expire;
   private int flags;
   private ByteBuf data;
   private Key key;
@@ -45,26 +38,13 @@ public final class LocalCacheElement implements CacheElement, Externalizable {
     this.casUnique = casUnique;
   }
 
-  /**
-   * @return the current time in seconds
-   */
-  public static int Now() {
-    return (int) (System.currentTimeMillis() / 1000);
+  public static LocalCacheElement key(final Key key) {
+    return new LocalCacheElement(key);
   }
 
   @Override
   public int size() {
     return getData().capacity();
-  }
-
-  public static class IncrDecrResult {
-    int oldValue;
-    LocalCacheElement replace;
-
-    public IncrDecrResult(final int oldValue, final LocalCacheElement replace) {
-      this.oldValue = oldValue;
-      this.replace = replace;
-    }
   }
 
   @Override
@@ -90,11 +70,8 @@ public final class LocalCacheElement implements CacheElement, Externalizable {
     if (!data.equals(that.data)) {
       return false;
     }
-    if (!key.equals(that.key)) {
-      return false;
-    }
 
-    return true;
+    return key.equals(that.key);
   }
 
   @Override
@@ -105,10 +82,6 @@ public final class LocalCacheElement implements CacheElement, Externalizable {
     result = 31 * result + key.hashCode();
     result = 31 * result + (int) (casUnique ^ (casUnique >>> 32));
     return result;
-  }
-
-  public static LocalCacheElement key(final Key key) {
-    return new LocalCacheElement(key);
   }
 
   @Override
@@ -128,6 +101,12 @@ public final class LocalCacheElement implements CacheElement, Externalizable {
   }
 
   @Override
+  public void setData(final ByteBuf data) {
+    data.readerIndex(0);
+    this.data = data;
+  }
+
+  @Override
   public Key getKey() {
     return key;
   }
@@ -142,41 +121,4 @@ public final class LocalCacheElement implements CacheElement, Externalizable {
     this.casUnique = casUnique;
   }
 
-  @Override
-  public void setData(final ByteBuf data) {
-    data.readerIndex(0);
-    this.data = data;
-  }
-
-  @Override
-  public void readExternal(final ObjectInput in) throws IOException{
-    expire = in.readInt() ;
-    flags = in.readInt();
-
-    final int length = in.readInt();
-    int readSize = 0;
-    final byte[] dataArrary = new byte[length];
-    while( readSize < length) {
-      readSize += in.read(dataArrary, readSize, length - readSize);
-    }
-    data = Unpooled.wrappedBuffer(dataArrary);
-
-
-    final byte[] keyBytes = new byte[in.readInt()];
-    in.read(keyBytes);
-    key = new Key(Unpooled.wrappedBuffer(keyBytes));
-    casUnique = in.readLong();
-  }
-
-  @Override
-  public void writeExternal(final ObjectOutput out) throws IOException {
-    out.writeInt(expire) ;
-    out.writeInt(flags);
-    final byte[] dataArray = data.copy().array();
-    out.writeInt(dataArray.length);
-    out.write(dataArray);
-    out.write(key.bytes.capacity());
-    out.write(key.bytes.copy().array());
-    out.writeLong(casUnique);
-  }
 }

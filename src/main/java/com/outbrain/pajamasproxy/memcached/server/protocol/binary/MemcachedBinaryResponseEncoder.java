@@ -120,8 +120,8 @@ public class MemcachedBinaryResponseEncoder extends MessageToByteEncoder<Respons
 
     // write key if there is one
     ByteBuf keyBuffer = null;
-    if (bcmd.addKeyToResponse && command.cmd.keys != null && command.cmd.keys.size() != 0) {
-      keyBuffer = Unpooled.wrappedBuffer(command.cmd.keys.get(0).bytes);
+    if (bcmd.addKeyToResponse && command.cmd.key != null) {
+      keyBuffer = command.cmd.key.bytes;
     }
 
     // write value if there is one
@@ -138,7 +138,7 @@ public class MemcachedBinaryResponseEncoder extends MessageToByteEncoder<Respons
         if (element != null) {
           valueBuffer = Unpooled.wrappedBuffer(element.getData());
         } else {
-          valueBuffer = Unpooled.buffer(0);
+          valueBuffer = Unpooled.EMPTY_BUFFER;
           extrasBuffer = null;
         }
       } else if (command.cmd.op == Op.INCR || command.cmd.op == Op.DECR) {
