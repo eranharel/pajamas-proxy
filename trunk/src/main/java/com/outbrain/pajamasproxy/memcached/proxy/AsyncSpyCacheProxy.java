@@ -12,50 +12,52 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Future;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-import com.outbrain.pajamasproxy.memcached.proxy.future.GetMultiFuture;
 import net.spy.memcached.MemcachedClientIF;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
+import com.codahale.metrics.Counter;
+import com.codahale.metrics.MetricRegistry;
 import com.outbrain.pajamasproxy.memcached.adapter.CacheElement;
 import com.outbrain.pajamasproxy.memcached.adapter.Key;
 import com.outbrain.pajamasproxy.memcached.proxy.future.CasFuture;
 import com.outbrain.pajamasproxy.memcached.proxy.future.DeleteFuture;
 import com.outbrain.pajamasproxy.memcached.proxy.future.GetFuture;
+import com.outbrain.pajamasproxy.memcached.proxy.future.GetMultiFuture;
 import com.outbrain.pajamasproxy.memcached.proxy.future.StoreFuture;
 import com.outbrain.pajamasproxy.memcached.proxy.value.DeleteResponse;
 import com.outbrain.pajamasproxy.memcached.proxy.value.StoreResponse;
 
 class AsyncSpyCacheProxy implements AsyncCache, MemcachedProxyStatistics {
 
-  private static final Logger log = LoggerFactory.getLogger(AsyncSpyCacheProxy.class);
-
   public static final String memcachedVersion = "0.9";
-
-  private final AtomicLong started = new AtomicLong();
-
-  private final AtomicInteger getCmds = new AtomicInteger();
-  private final AtomicInteger setCmds = new AtomicInteger();
-  private final AtomicInteger getHits = new AtomicInteger();
-  private final AtomicInteger getMisses = new AtomicInteger();
-  //  private final AtomicLong casCounter = new AtomicLong(1);
-
+  private static final Logger log = LoggerFactory.getLogger(AsyncSpyCacheProxy.class);
   private static final Charset DEFAULT_CHARSET = Charset.forName("utf-8");
-
+  private final AtomicLong started = new AtomicLong();
+  private final Counter getCmds;
+  private final Counter setCmds;
+  private final Counter getHits;
+  //  private final AtomicLong casCounter = new AtomicLong(1);
+  private final Counter getMisses;
   // TODO these members are not being updated ATM...
-  private final AtomicInteger errors = new AtomicInteger();
-  private final AtomicInteger timeouts = new AtomicInteger();
-
+  private final Counter errors;
+  private final Counter timeouts;
   private final MemcachedClientIF memcachedClient;
 
-  public AsyncSpyCacheProxy(final MemcachedClientIF memcachedClient) throws IOException {
+  public AsyncSpyCacheProxy(final MemcachedClientIF memcachedClient, MetricRegistry metrics) throws IOException {
     Assert.notNull(memcachedClient, "memcachedClient may not be null");
+    Assert.notNull(metrics, "metrics may not be null");
     this.memcachedClient = memcachedClient;
+    getCmds = metrics.counter("getCommands");
+    setCmds = metrics.counter("setCommands");
+    getHits = metrics.counter("getHits");
+    getMisses = metrics.counter("getMisses");
+    errors = metrics.counter("errors");
+    timeouts = metrics.counter("timeouts");
   }
 
   @Override
@@ -85,7 +87,7 @@ class AsyncSpyCacheProxy implements AsyncCache, MemcachedProxyStatistics {
 
   @Override
   public Future<StoreResponse> set(final CacheElement element) {
-    setCmds.incrementAndGet();
+    setCmds.inc();
     return new StoreFuture(memcachedClient.set(toStringKey(element.getKey()), element.getExpire(), element));
   }
 
@@ -106,7 +108,7 @@ class AsyncSpyCacheProxy implements AsyncCache, MemcachedProxyStatistics {
 
   @Override
   public Future<CacheElement[]> get(final Collection<Key> keys) {
-    getCmds.incrementAndGet();
+    getCmds.inc();
 
     final List<String> stringKeys = extractStringKeys(keys);
     log.debug("get({})", stringKeys);
@@ -116,7 +118,7 @@ class AsyncSpyCacheProxy implements AsyncCache, MemcachedProxyStatistics {
 
   @Override
   public Future<CacheElement> get(Key key) {
-    getCmds.incrementAndGet();
+    getCmds.inc();
 
     String stringKey = toStringKey(key);
     log.debug("get({})", stringKey);
@@ -201,33 +203,33 @@ class AsyncSpyCacheProxy implements AsyncCache, MemcachedProxyStatistics {
   }
 
   @Override
-  public int getErrors() {
-    return errors.get();
+  public long getErrors() {
+    return errors.getCount();
   }
 
   @Override
-  public int getTimeouts() {
-    return timeouts.get();
+  public long getTimeouts() {
+    return timeouts.getCount();
   }
 
   @Override
-  public int getGetCommands() {
-    return getCmds.get();
+  public long getGetCommands() {
+    return getCmds.getCount();
   }
 
   @Override
-  public final int getSetCommands() {
-    return setCmds.get();
+  public long getSetCommands() {
+    return setCmds.getCount();
   }
 
   @Override
-  public final int getGetHits() {
-    return getHits.get();
+  public long getGetHits() {
+    return getHits.getCount();
   }
 
   @Override
-  public final int getGetMisses() {
-    return getMisses.get();
+  public long getGetMisses() {
+    return getMisses.getCount();
   }
 
   /**

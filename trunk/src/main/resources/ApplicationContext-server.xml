@@ -4,7 +4,6 @@
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
   <bean id="daemon" class="com.outbrain.pajamasproxy.memcached.server.MemCacheDaemon" destroy-method="stop">
-    <constructor-arg ref="cacheProxy"/>
     <constructor-arg ref="eventLoopGroup"/>
     <constructor-arg ref="memcachedBinaryPipelineFactory"/>
 
@@ -29,6 +28,7 @@
     <constructor-arg value="1.4.14" /><!-- TODO pass this from maven? -->
     <constructor-arg value="${pajamas.deamon.verbose}" />
     <constructor-arg ref="commandQueue"/>
+    <constructor-arg ref="metrics"/>
   </bean>    
 
   <bean id="commandQueue" class="com.outbrain.pajamasproxy.memcached.server.protocol.command.CommandQueueImpl">

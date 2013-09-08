@@ -5,6 +5,7 @@
 
   <bean id="cacheProxy" class="com.outbrain.pajamasproxy.memcached.proxy.AsyncSpyCacheProxy">
     <constructor-arg ref="memcachedClient"/>
+    <constructor-arg ref="metrics"/>
   </bean>
 
   <bean id="memcachedClient" class="net.spy.memcached.spring.MemcachedClientFactoryBean">

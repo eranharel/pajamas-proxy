@@ -19,6 +19,8 @@ import java.util.Collections;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.codahale.metrics.Counter;
+import com.codahale.metrics.MetricRegistry;
 import com.outbrain.pajamasproxy.memcached.adapter.Key;
 import com.outbrain.pajamasproxy.memcached.server.protocol.command.AsyncGetMultiCommand;
 import org.slf4j.Logger;
@@ -61,8 +63,9 @@ import io.netty.channel.SimpleChannelInboundHandler;
 public final class MemcachedCommandHandler extends SimpleChannelInboundHandler<CommandMessage> implements ServerConnectionStatistics {
 
   final Logger logger = LoggerFactory.getLogger(MemcachedCommandHandler.class);
-  private final AtomicInteger currentConnectionCount = new AtomicInteger();
-  private final AtomicInteger totalConnectionCount = new AtomicInteger();
+  private final Counter currentConnectionCount;
+  private final Counter totalConnectionCount;
+
   /**
    * The following state variables are universal for the entire daemon. These are used for statistics gathering.
    * In order for these values to work properly, the handler _must_ be declared with a ChannelPipelineCoverage
@@ -83,22 +86,24 @@ public final class MemcachedCommandHandler extends SimpleChannelInboundHandler<C
    * @param memcachedVersion the version string to return to clients
    * @param verbosity        verbosity level for debugging
    */
-  public MemcachedCommandHandler(final AsyncCache cache, final String memcachedVersion, final boolean verbosity, final CommandQueue commandQueue) {
+  public MemcachedCommandHandler(final AsyncCache cache, final String memcachedVersion, final boolean verbosity, final CommandQueue commandQueue, MetricRegistry metrics) {
     this.cache = cache;
     this.version = memcachedVersion;
     this.verbose = verbosity;
     this.commandQueue = commandQueue;
+    currentConnectionCount = metrics.counter("currentConnections");
+    totalConnectionCount = metrics.counter("totalConnections");
   }
 
   @Override
   public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
-    totalConnectionCount.incrementAndGet();
-    currentConnectionCount.incrementAndGet();
+    totalConnectionCount.inc();
+    currentConnectionCount.inc();
   }
 
   @Override
   public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
-    currentConnectionCount.decrementAndGet();
+    currentConnectionCount.dec();
   }
 
   /**
@@ -267,12 +272,12 @@ public final class MemcachedCommandHandler extends SimpleChannelInboundHandler<C
   }
 
   @Override
-  public int getCurrentConnectionCount() {
-    return currentConnectionCount.get();
+  public long getCurrentConnectionCount() {
+    return currentConnectionCount.getCount();
   }
 
   @Override
-  public int getTotalConnectionCount() {
-    return totalConnectionCount.get();
+  public long getTotalConnectionCount() {
+    return totalConnectionCount.getCount();
   }
 }

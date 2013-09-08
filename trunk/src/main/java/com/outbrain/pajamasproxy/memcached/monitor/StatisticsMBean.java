@@ -7,39 +7,39 @@ package com.outbrain.pajamasproxy.memcached.monitor;
  */
 public interface StatisticsMBean {
 
-  public int getCurrentConnectionCount();
+  public long getCurrentConnectionCount();
 
-  public int getTotalConnectionCount();
+  public long getTotalConnectionCount();
 
   /**
    * @return The cache get commands count for the entire proxied cluster.
    */
-  public int getGetCommands();
+  public long getGetCommands();
 
   /**
    * @return The cache set commands count for the entire proxied cluster.
    */
-  public int getSetCommands();
+  public long getSetCommands();
 
   /**
    * @return The cache get hit count for the entire proxied cluster.
    */
-  public int getGetHits();
+  public long getGetHits();
 
   /**
    * @return The cache get miss count for the entire proxied cluster.
    */
-  public int getGetMisses();
+  public long getGetMisses();
 
   /**
    * @return The number of timedout operations since startup.
    */
-  public abstract int getTimeouts();
+  public long getTimeouts();
 
   /**
    * @return The number of failed operations since startup.
    */
-  public abstract int getErrors();
+  public long getErrors();
 
   /**
    * @return the number of memcached commands decoding errors.

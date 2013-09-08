@@ -27,42 +27,42 @@ class Statistics implements StatisticsMBean {
   }
 
   @Override
-  public int getCurrentConnectionCount() {
+  public long getCurrentConnectionCount() {
     return connectionStatistics.getCurrentConnectionCount();
   }
 
   @Override
-  public int getTotalConnectionCount() {
+  public long getTotalConnectionCount() {
     return connectionStatistics.getTotalConnectionCount();
   }
 
   @Override
-  public int getGetCommands() {
+  public long getGetCommands() {
     return proxyStatistics.getGetCommands();
   }
 
   @Override
-  public int getSetCommands() {
+  public long getSetCommands() {
     return proxyStatistics.getSetCommands();
   }
 
   @Override
-  public int getGetHits() {
+  public long getGetHits() {
     return proxyStatistics.getGetHits();
   }
 
   @Override
-  public int getGetMisses() {
+  public long getGetMisses() {
     return proxyStatistics.getGetMisses();
   }
 
   @Override
-  public int getErrors() {
+  public long getErrors() {
     return proxyStatistics.getErrors();
   }
 
   @Override
-  public int getTimeouts() {
+  public long getTimeouts() {
     return proxyStatistics.getTimeouts();
   }
 
