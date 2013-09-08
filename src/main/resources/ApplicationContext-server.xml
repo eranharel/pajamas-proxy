@@ -31,5 +31,7 @@
     <constructor-arg ref="commandQueue"/>
   </bean>    
 
-  <bean id="commandQueue" class="com.outbrain.pajamasproxy.memcached.server.protocol.command.CommandQueueImpl"/>
+  <bean id="commandQueue" class="com.outbrain.pajamasproxy.memcached.server.protocol.command.CommandQueueImpl">
+    <constructor-arg ref="metrics"/>
+  </bean>
 </beans>
