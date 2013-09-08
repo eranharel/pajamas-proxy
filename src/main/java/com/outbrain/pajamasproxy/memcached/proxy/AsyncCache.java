@@ -125,22 +125,22 @@ public interface AsyncCache {
   /**
    * @return the number of get commands executed
    */
-  int getGetCommands();
+  long getGetCommands();
 
   /**
    * @return the number of set commands executed
    */
-  int getSetCommands();
+  long getSetCommands();
 
   /**
    * @return the number of get hits
    */
-  int getGetHits();
+  long getGetHits();
 
   /**
    * @return the number of stats
    */
-  int getGetMisses();
+  long getGetMisses();
 
   /**
    * Retrieve stats about the cache. If an argument is specified, a specific category of stats is requested.

@@ -7,8 +7,8 @@ package com.outbrain.pajamasproxy.memcached.server.protocol;
  */
 public interface ServerConnectionStatistics {
 
-  public abstract int getCurrentConnectionCount();
+  public abstract long getCurrentConnectionCount();
 
-  public abstract int getTotalConnectionCount();
+  public abstract long getTotalConnectionCount();
 
 }
