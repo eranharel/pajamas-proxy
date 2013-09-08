@@ -5,7 +5,9 @@
 
   <import resource="ApplicationContext-server.xml"/>
   <import resource="ApplicationContext-client.xml"/>
+  <!-- TODO remove this when fully replaced by metrics -->
   <import resource="ApplicationContext-jmx.xml"/>
+  <import resource="ApplicationContext-metrics.xml"/>
   
   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
     <property name="ignoreUnresolvablePlaceholders" value="false"/>
