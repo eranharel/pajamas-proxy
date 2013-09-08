@@ -15,6 +15,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
 import junit.framework.Assert;
 import net.spy.memcached.CASResponse;
@@ -54,8 +55,8 @@ public class AsyncSpyCacheProxyTest {
 
   @Mock
   private MemcachedClientIF clientMock;
-  @Mock
-  private MetricRegistry metricRegistry;
+
+  private MetricRegistry metricRegistry = new MetricRegistry();
 
   private AsyncSpyCacheProxy cacheProxy;
 
