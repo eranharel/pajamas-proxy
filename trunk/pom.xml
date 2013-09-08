@@ -187,9 +187,15 @@
     </dependency>
 
     <dependency>
-      <groupId>org.perf4j</groupId>
-      <artifactId>perf4j</artifactId>
-      <version>0.9.13</version>
+      <groupId>com.codahale.metrics</groupId>
+      <artifactId>metrics-core</artifactId>
+      <version>3.0.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.codahale.metrics</groupId>
+      <artifactId>metrics-graphite</artifactId>
+      <version>3.0.1</version>
     </dependency>
 
     <dependency>
