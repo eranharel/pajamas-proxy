@@ -52,12 +52,12 @@ class AsyncSpyCacheProxy implements AsyncCache, MemcachedProxyStatistics {
     Assert.notNull(memcachedClient, "memcachedClient may not be null");
     Assert.notNull(metrics, "metrics may not be null");
     this.memcachedClient = memcachedClient;
-    getCmds = metrics.counter("getCommands");
-    setCmds = metrics.counter("setCommands");
-    getHits = metrics.counter("getHits");
-    getMisses = metrics.counter("getMisses");
-    errors = metrics.counter("errors");
-    timeouts = metrics.counter("timeouts");
+    getCmds = metrics.counter("AsyncSpyCacheProxy.getCommands");
+    setCmds = metrics.counter("AsyncSpyCacheProxy.setCommands");
+    getHits = metrics.counter("AsyncSpyCacheProxy.getHits");
+    getMisses = metrics.counter("AsyncSpyCacheProxy.getMisses");
+    errors = metrics.counter("AsyncSpyCacheProxy.errors");
+    timeouts = metrics.counter("AsyncSpyCacheProxy.timeouts");
   }
 
   @Override
