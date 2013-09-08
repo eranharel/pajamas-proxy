@@ -91,8 +91,8 @@ public final class MemcachedCommandHandler extends SimpleChannelInboundHandler<C
     this.version = memcachedVersion;
     this.verbose = verbosity;
     this.commandQueue = commandQueue;
-    currentConnectionCount = metrics.counter("currentConnections");
-    totalConnectionCount = metrics.counter("totalConnections");
+    currentConnectionCount = metrics.counter("MemcachedCommandHandler.currentConnections");
+    totalConnectionCount = metrics.counter("MemcachedCommandHandler.totalConnections");
   }
 
   @Override

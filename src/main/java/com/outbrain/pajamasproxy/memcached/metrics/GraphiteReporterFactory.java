@@ -23,6 +23,7 @@ class GraphiteReporterFactory {
       final Graphite graphite = new Graphite(new InetSocketAddress(graphiteHost, graphitePort));
       graphiteReporter = GraphiteReporter.forRegistry(metrics).prefixedWith(metricsPrefix + "." + hostname()).convertRatesTo(TimeUnit.SECONDS)
                                          .convertDurationsTo(TimeUnit.MILLISECONDS).build(graphite);
+
     } else {
       graphiteReporter = null;
     }

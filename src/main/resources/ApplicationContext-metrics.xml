@@ -17,4 +17,8 @@
     <constructor-arg ref="metrics"/>
   </bean>
 
+  <bean id="jvmMetricsInitializer" class="com.outbrain.pajamasproxy.memcached.metrics.JvmMetricsInitializer">
+    <constructor-arg ref="metrics"/>
+  </bean>
+
 </beans>
