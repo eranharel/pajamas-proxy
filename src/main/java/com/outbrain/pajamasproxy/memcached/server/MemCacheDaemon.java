@@ -40,15 +40,13 @@ public class MemCacheDaemon {
   final Logger log = LoggerFactory.getLogger(MemCacheDaemon.class);
 
   private InetSocketAddress addr;
-  private final AsyncCache cache;
 
   private final EventLoopGroup eventLoopGroup;
   private final ChannelHandler serverPipelineFactory;
 
   private boolean running = false;
 
-  public MemCacheDaemon(final AsyncCache cache, EventLoopGroup eventLoopGroup, ChannelHandler serverPipelineFactory) {
-    this.cache = cache;
+  public MemCacheDaemon(EventLoopGroup eventLoopGroup, ChannelHandler serverPipelineFactory) {
     this.eventLoopGroup = eventLoopGroup;
     this.serverPipelineFactory = serverPipelineFactory;
   }

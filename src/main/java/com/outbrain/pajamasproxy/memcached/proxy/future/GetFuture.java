@@ -3,6 +3,7 @@ package com.outbrain.pajamasproxy.memcached.proxy.future;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.codahale.metrics.Counter;
 import org.springframework.util.Assert;
 
 import com.outbrain.pajamasproxy.memcached.adapter.CacheElement;
@@ -10,10 +11,10 @@ import com.outbrain.pajamasproxy.memcached.adapter.CacheElement;
 public class GetFuture extends AbstractSpyFutureWrapper<Object, CacheElement> {
 
   private final String key;
-  private final AtomicInteger getHits;
-  private final AtomicInteger getMisses;
+  private final Counter getHits;
+  private final Counter getMisses;
 
-  public GetFuture(final Future<Object> future, final String key, final AtomicInteger getHits, final AtomicInteger getMisses) {
+  public GetFuture(final Future<Object> future, final String key, final Counter getHits, final Counter getMisses) {
     super(future);
     Assert.notNull(key, "key may not be null");
     Assert.notNull(getHits, "getHits may not be null");
@@ -27,9 +28,9 @@ public class GetFuture extends AbstractSpyFutureWrapper<Object, CacheElement> {
   protected CacheElement convertSpyResponse(final Object spyResponse) {
     final CacheElement cacheElement = (CacheElement) spyResponse;
     if (null == cacheElement) {
-      getMisses.incrementAndGet();
+      getMisses.inc();
     } else {
-      getHits.incrementAndGet();
+      getHits.inc();
     }
 
     return cacheElement;

@@ -43,20 +43,20 @@ public class StatisticsTest {
 
   @Test
   public void testGetCurrentConnectionCount() {
-    final int expectedCount = 666;
+    final long expectedCount = 666;
 
     when(connectionStatisticsMock.getCurrentConnectionCount()).thenReturn(expectedCount);
-    final int actualCount = createStatisticsMBean().getCurrentConnectionCount();
+    final long actualCount = createStatisticsMBean().getCurrentConnectionCount();
 
     assertEquals("getCurrentConnectionCount", expectedCount, actualCount);
   }
 
   @Test
   public void testGetTotalConnectionCount() {
-    final int expectedCount = 999;
+    final long expectedCount = 999;
 
     when(connectionStatisticsMock.getTotalConnectionCount()).thenReturn(expectedCount);
-    final int actualCount = createStatisticsMBean().getTotalConnectionCount();
+    final long actualCount = createStatisticsMBean().getTotalConnectionCount();
 
     assertEquals("getTotalConnectionCount", expectedCount, actualCount);
   }
@@ -68,10 +68,10 @@ public class StatisticsTest {
 
   @Test
   public void testGetGetCommands() {
-    final int expectedCommandCount = 8;
+    final long expectedCommandCount = 8;
 
     when(proxyMock.getGetCommands()).thenReturn(expectedCommandCount);
-    final int actualCommandCount = createStatisticsMBean().getGetCommands();
+    final long actualCommandCount = createStatisticsMBean().getGetCommands();
     assertEquals("get command count", expectedCommandCount, actualCommandCount);
   }
 
@@ -82,10 +82,10 @@ public class StatisticsTest {
 
   @Test
   public void testGetSetCommands() {
-    final int expectedCommandCount = 9;
+    final long expectedCommandCount = 9;
 
     when(proxyMock.getSetCommands()).thenReturn(expectedCommandCount);
-    final int actualCommandCount = createStatisticsMBean().getSetCommands();
+    final long actualCommandCount = createStatisticsMBean().getSetCommands();
     assertEquals("set command count", expectedCommandCount, actualCommandCount);
   }
 
@@ -96,10 +96,10 @@ public class StatisticsTest {
 
   @Test
   public void testGetGetHits() {
-    final int expectedCommandCount = 10;
+    final long expectedCommandCount = 10;
 
     when(proxyMock.getGetHits()).thenReturn(expectedCommandCount);
-    final int actualCommandCount = createStatisticsMBean().getGetHits();
+    final long actualCommandCount = createStatisticsMBean().getGetHits();
     assertEquals("get hits count", expectedCommandCount, actualCommandCount);
   }
 
@@ -110,10 +110,10 @@ public class StatisticsTest {
 
   @Test
   public void testGetGetMisses() {
-    final int expectedCommandCount = 77;
+    final long expectedCommandCount = 77;
 
     when(proxyMock.getGetMisses()).thenReturn(expectedCommandCount);
-    final int actualCommandCount = createStatisticsMBean().getGetMisses();
+    final long actualCommandCount = createStatisticsMBean().getGetMisses();
     assertEquals("get miss count", expectedCommandCount, actualCommandCount);
   }
 
@@ -124,10 +124,10 @@ public class StatisticsTest {
 
   @Test
   public void testGetErrors() {
-    final int expectedCommandCount = 345;
+    final long expectedCommandCount = 345;
 
     when(proxyMock.getErrors()).thenReturn(expectedCommandCount);
-    final int actualCommandCount = createStatisticsMBean().getErrors();
+    final long actualCommandCount = createStatisticsMBean().getErrors();
     assertEquals("error count", expectedCommandCount, actualCommandCount);
   }
 
@@ -138,10 +138,10 @@ public class StatisticsTest {
 
   @Test
   public void testGetTimeouts() {
-    final int expectedCommandCount = 9090;
+    final long expectedCommandCount = 9090;
 
     when(proxyMock.getTimeouts()).thenReturn(expectedCommandCount);
-    final int actualCommandCount = createStatisticsMBean().getTimeouts();
+    final long actualCommandCount = createStatisticsMBean().getTimeouts();
     assertEquals("timeout count", expectedCommandCount, actualCommandCount);
   }
 
