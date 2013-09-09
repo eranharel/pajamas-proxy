@@ -1,5 +1,5 @@
 #summary How to monitor Pajamas-Proxy.
-#labels jmx,monitoring,http
+#labels jmx,monitoring,http,Graphite
 
 = Pajamas-Proxy Monitoring In a Nutshell =
 
@@ -17,6 +17,8 @@ Apart from the standard Java MBeans, the daemon also exposes the following MBean
 
  * *com.outbrain.pajamasproxy.memcached.monitor.!CacheCluster:type=Manager* - provides means for interacting, and controlling the cache client.
  * *com.outbrain.pajamasproxy.memcached.monitor.Statistics:type=Statistics* - Aggregates the proxy statistics metrics, like hits / misses / errors / etc.
+* *metrics:name=XXXCommand* - performance statistics for XXX memcached command
+* many more JVM metrics MBeans
 
 === Configuring JMX ===
 
@@ -49,4 +51,16 @@ In order to access the pajamas-proxy JMX HTTP adaptor via a web browser, browse 
 In order to access the pajamas-proxy JMX from [http://java.sun.com/developer/technicalArticles/J2SE/jconsole.html JConsole] specify the host:port as provided above. For example:
 {{{
 jconsole localhost:9999
+}}}
+
+=== Configure Graphite ===
+
+Since 1.0 metrics can now be sent to graphite.
+Edit the `pajamas.properties` file located at <install-dir>/conf:
+{{{
+pajamas.graphite.host=my.graphite.com
+pajamas.graphite.port=2003
+# set to true to enable (false by default) ;)
+pajamas.graphite.enabled=true
+pajamas.graphite.prefix=root.of.pajamas.proxy.metrics
 }}}
