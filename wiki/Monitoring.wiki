@@ -56,7 +56,7 @@ jconsole localhost:9999
 === Configure Graphite ===
 
 Since 1.0 metrics can now be sent to graphite.
-Edit the `pajamas.properties` file located at <install-dir>/conf:
+Edit the `pajamas.properties` file located at `<install-dir>/conf`:
 {{{
 pajamas.graphite.host=my.graphite.com
 pajamas.graphite.port=2003
@@ -64,3 +64,9 @@ pajamas.graphite.port=2003
 pajamas.graphite.enabled=true
 pajamas.graphite.prefix=root.of.pajamas.proxy.metrics
 }}}
+
+Graphite metrics will be added under the specified prefix appended with the host name. For example:
+{{{
+services.prod.pajamas-proxy.pjm-00001.AsyncGetCommand.mean
+}}}
+Where pjm-00001 is the host name.
