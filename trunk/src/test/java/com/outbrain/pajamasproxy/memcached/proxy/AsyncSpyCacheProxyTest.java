@@ -21,6 +21,7 @@ import junit.framework.Assert;
 import net.spy.memcached.CASResponse;
 import net.spy.memcached.MemcachedClientIF;
 import net.spy.memcached.internal.BulkFuture;
+import net.spy.memcached.internal.BulkGetCompletionListener;
 import net.spy.memcached.ops.OperationStatus;
 
 import org.junit.After;
@@ -399,6 +400,16 @@ public class AsyncSpyCacheProxyTest {
     public OperationStatus getStatus() {
       // TODO Auto-generated method stub
       return null;
+    }
+
+    @Override
+    public Future<V> addListener(final BulkGetCompletionListener listener) {
+      return this;
+    }
+
+    @Override
+    public Future<V> removeListener(final BulkGetCompletionListener listener) {
+      return this;
     }
   }
 }
