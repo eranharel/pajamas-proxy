@@ -1,5 +1,7 @@
 # Pajamas Proxy - a Memcached Proxy written in Java #
 
+[![Build Status](https://travis-ci.org/eranharel/pajamas-proxy.svg?branch=master)](https://travis-ci.org/eranharel/pajamas-proxy)
+
 This project is developed as an easy to use alternative to [moxi](http://code.google.com/p/moxi/). It is easier to [install, configure](GettingStarted.md), and [monitor](Monitoring.md), and should be easier to use for Java developers. It also has a full compatibility with [Spymemcached](http://code.google.com/p/spymemcached/), and [Xmemcached](http://code.google.com/p/xmemcached/)  [memcached](http://www.danga.com/memcached/) Java clients.
 
 ## What is it for? ##
